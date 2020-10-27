@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta name="generator" content="HTML Tidy for Windows (vers 25 March 2009), see www.w3.org">
+    <title>CS636 hw1</title>
+    <link rel="themeData" href="hw1_files/themedata.thmx">
+    <link rel="colorSchemeMapping" href="hw1_files/colorschememapping.xml">
+  </head>
+  <body vlink="purple" link="blue">
+    <div class="WordSection1">
+      <h2>CS636 Homework 1 Review, Setup, and Intro/Review of JDBC</h2>
+      <p>Due Monday, Feb. 10, in class, on paper. Be sure to get a UNIX/Linux
+        account as soon as possible after the departmental site is up, to list
+        your username for the needed Oracle and mysql accounts, and access to
+        topcat.cs.umb.edu.<br>
+        <br>
+        1. &nbsp;Basic HTML and URLs, intro to web apps.</p>
+      <div>
+        <p>--Learn about absolute and relative URLs, say by looking at this <a
+            href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL"
+            target="_blank"> tutorial on URLs</a> and looking at the examples in
+          Murach, pg. 101.<br>
+          --Read Murach, Chap. 1, through pg. 17 for an intro to web apps.<br>
+          --Read Murach, Chap. 4 through pg. 105.&nbsp;We will go on to CSS and
+          HTML forms in the next homework. </p>
+      </div>
+      Use a plain editor like emacs or Notepad to compose a web page test1.html
+      with page title "Mytitle", contents entitled "Important links", and a
+      relative link to a copy of this file (hw1.html), and an absolute link to
+      the root of our departmental website, with appropriate descriptive
+      text&nbsp;for the user to see. &nbsp;Include the text of test1.html in
+      your homework submission.<br>
+      <p> </p>
+      <p>2. <span style="font-weight: bold;">Review SQL</span>. Read Murach pp.
+        364-373.&nbsp;Go to <a href="http://sqlzoo.net">sqlzoo.net</a>,&nbsp;
+        Pull down the Tutorials menu, and select the following tutorials:</p>
+      <ul>
+        <li> Select from nobel:&nbsp; 4, 7&nbsp; (number them&nbsp; 1-4,
+          1-7)&nbsp; For 7, use LIKE</li>
+        <li> Select within select: &nbsp;2, 4, 6&nbsp;&nbsp;(2-2, etc.)</li>
+        <li> Sum and count: 2, 4, 6</li>
+        <li> More Joins: 3, 6, 7, 9 </li>
+      </ul>
+      Show your answers (copy and paste the SQL into your homework file). If an
+      error message seems useless, try another database for the query--it might
+      give better error messages.
+      <p>3. Review <span style="font-weight: bold;">Java OO principles</span>,
+        specifically the idea that <i>all Java classes are subclasses of the
+          Object class</i>, and thus must have all the methods of the Object
+        class. You can see the Object class API (and any other standard class)
+        by following the link "JDK API" on the class web page under Resources
+        Java (6<sup>th</sup> line down under Resources). Choose “Object” in the
+        pane titled All Classes, and the API will be displayed on the right.<br>
+        a. What are the three most important Object methods?&nbsp; (Hint: their
+        names start with e, h, and t). Because all objects have these methods,
+        we can use HashSet to contain any set of objects (we'll stick to sets of
+        same-type objects in our work).<br>
+        b. Show equals in use by writing one if (…) that checks whether s String
+        s is equal to a String t, character by character.&nbsp; Explain what
+        this comparison is doing if s = “abc” and t = “abx”.&nbsp; Compare this
+        to what happens in if (s == t).<br>
+        c.&nbsp; Find the hashCode and toString values for String s =
+        “abc”.&nbsp; Also for the Integer of value 6.</p>
+      <p>4<b>. Java Beans.</b> a. Write a small Java class Box1.java that has
+        private int fields x, y for the dimensions of the (2-dimensional) box in
+        mm. Give it getters and setters for x and y, and a simple constructor
+        that takes x and y values, but no other methods. This is a simple “Java
+        Bean”.&nbsp; For Box1 objects b and c, separately created but both
+        describing 10x12 boxes, what is b.equals(c)? What is being compared
+        here?<br>
+        b. For Java class Box2.java, start from the Box1.java code and add an
+        equals method that compares the x’s and y’s of the two Box2 objects to
+        see if they are both the same or not.&nbsp; Make sure your equals method
+        overrides Object.equals by using the annotation @Override (it’s easy to
+        go wrong here). For an example, see <a href="http://www.geeksforgeeks.org/overriding-equals-method-in-java/">
+          http://www.geeksforgeeks.org/overriding-equals-method-in-java/</a>.Write
+        a hashCode method that is consistent with your equals method.&nbsp;
+        Consistent here means satisfying the second bulleted requirement under
+        the Object.hashCode documentation, namely “If two objects are equal
+        according to the&nbsp;equals(Object)&nbsp;method, then calling
+        the&nbsp;hashCode&nbsp;method on each of the two objects must produce
+        the same integer result.” <br>
+        c. Finally, write a toString method that returns “10x12” for a 10 by 12
+        box.&nbsp; For Box2 objects b and c, separately created but both
+        describing 10x12 boxes, what is b.equals(c)?<br>
+        <br>
+        5. Review<span style="font-weight: bold;"> Java Collection classe</span>s.
+        &nbsp;Look at the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/">
+          Collection Framework home page</a> at Oracle, and from there the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/collections/overview.html">
+          Collections Framework Overview</a> and Collections Tutorial, for
+        Java&nbsp;8. &nbsp;.<a href="http://java.sun.com/j2se/1.5.0/docs/guide/collections/changes5.html"><br>
+        </a>a. &nbsp;What are the two most important concrete classes that are
+        available for the Set interface? &nbsp;the Map interface?<br>
+        b. &nbsp;Explain how you can find all the&nbsp;elements of a given Set
+        object. &nbsp;Does your answer also apply to Lists? &nbsp;other things?
+        &nbsp;what class of objects?<br>
+        c. &nbsp;Explain how you can find all the keys of a given Map.<br>
+        d. &nbsp;Write a Java fragment that creates a Map from String to
+        Integer. Add the association "x" -&gt; 6, that is, key "x" maps to
+        Integer 6.</p>
+      6. &nbsp;Start learning (or review) JDBC. Read Murach, Chap. 12 through
+      pg. 387, and the <a href="http://docs.oracle.com/javase/tutorial/jdbc/basics/index.html">
+        Oracle tutorial on basic JDBC</a>, specifically the sections named
+      “Setting Up Tables” and “Retrieving and Modifying Values from Result
+      Sets”, mainly the first example.<br>
+      a. What Java classes (include package name) support JDBC and are used in
+      the Oracle tutorial section “Setting Up Tables”? &nbsp;For each, briefly
+      explain what it provides. Note that con is assumed to be an available
+      field of type Connection.<br>
+      b. Do you need a new Connection for each SQL statement? &nbsp;Explain.<br>
+      c. &nbsp;Find the JDBC API documentation among the usual JSE Javadocs at <a
+        href="http://docs.oracle.com/javase/8/docs/api/">http://docs.oracle.com/javase/8/docs/api/</a>.
+      &nbsp;In particular, read Connection.close() and explain what it means.
+      &nbsp;The "resources" here involve the TCP/IP connection to the database,
+      an OS resource not directly managed the the Java vitual machine (JVM.)<br>
+      d. &nbsp;Explain how to use the "getXXX" methods. &nbsp;What getXXX
+      methods would you normally use with a VARCHAR(100) column? &nbsp;a FLOAT
+      column? &nbsp;a DECIMAL(7,2) column? a TIMESTAMP column? Explain what
+      these SQL datatypes mean, and give two examples of valid SQL literal
+      values for each. For detailed info on JDBC and SQL datatypes, see&nbsp; <a
+        href="https://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html">https://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html.</a></div>
+    <div class="WordSection1"><a href="https://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html"><br>
+      </a></div>
+    <div class="WordSection1"><a href="https://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html"></a>&nbsp;7.
+      Report on your <a href="DevelopmentSetup.html">DevelopmentSetup</a>
+      progress and/or problems (This file is available at our Piazza site).
+      &nbsp;Show your final "env" and "set" output, or the relevant subset of
+      it.&nbsp;You may use Netbeans rather than eclipse if you want, but class
+      demos and directions will be using eclipse. Also, Netbeans does not
+      support multi-directory source comparison, which we will occasionally use.</div>
+    <div class="WordSection1"><br>
+    </div>
+    <div class="WordSection1"><b>Note:</b> the following problems depend on our
+      cs.umb.edu network being available, so may need to be postponed. The
+      previous problems are definitely due on the due date, unless we have a
+      snow day or other class disruption.</div>
+    <div class="WordSection1"><br>
+    </div>
+    <div class="WordSection1"> 8.&nbsp; <span style="font-weight: bold;">Oracle.</span>&nbsp;
+      After you have verified your Oracle account is working by logging in to
+      system topcat.cs.umb.edu and using sqlplus as shown in <a href="DatabaseSetup.html">DatabaseSetup.html</a>,
+      try accessing it with the supplied program <a href="http://www.cs.umb.edu/cs636/jdbc">JdbcCheckup</a>.
+      See <a href="AccessToCSHosts.html">Access to cs.umb.edu systems from
+        offsite</a> for instructions on logging in from offsite. Note that you
+      can run JdbcCheckup on any of our UNIX/Linux hosts, or on your home PC,
+      and reach Oracle on dbs3. From outside cs.umb.edu, you need to set up a
+      "tunnel" to dbs3, as described in <a href="DatabaseSetup.html">Database
+        Setup</a>. Once JdbcCheckup works, log into topcat and run sqlplus and
+      record what tables have been created by the JDBC program by using the
+      catalog query "select * from user_tables" or just "select table_name from
+      user_tables" to get a less verbose report. Note that the jars supplied
+      with JdbcCheckup work equally well on Windows/Linux/MacOS as on
+      UNIX/Linux. Try it out on both your home PC and your departmental Linux
+      account.<br>
+      <p> 9.<span style="font-weight: bold;"> Mysql.</span><br>
+        User ronghui, for example, will have an account on mysql on topcat with
+        username ronghui, password ronghui, and a database named
+        ronghuidb.&nbsp; To access it, login to topcat.cs.umb.edu and use the
+        command:</p>
+      <p><code>mysql –u ronghui –D ronghuidb –p</code></p>
+      <p>and enter ronghui at the password prompt.&nbsp; Another way is shown on
+        pg. 351 of Murach:</p>
+      <code>mysql –u ronghui –p</code><br>
+      Enter password:<code> ronghui<br>
+        use ronghuidb</code>
+      <p>Similarly run JdbcCheckup on your mysql account. &nbsp;You can log in
+        on topcat and use the mysql command to look at the database. Also try
+        out hsqldb (see header comment on JdbcCheckup.java for directions).
+        Record your success or problems.&nbsp; </p>
+      <p>10.a. Try out the Data Source Explorer view in eclipse. Click on the
+        "New Connection Profile" icon (it has a little plus on it) in the Data
+        Source Explorer view, and add a new Connection to localhost (and have
+        the tunnel working), with driver MySQL (with driver jar from the jdbc
+        directory), Database xxxxdb, URL jdbc:mysql://localhost/xxxxdb, and User
+        name xxxx, where xxxx is your username. &nbsp;See your welcome table
+        there. Record your success or problems.<br>
+        b. Similarly set up an eclipse Connection to Oracle and view your
+        welcome table there, and similarly for h2 </p>
+      <p><br>
+      </p>
+    </div>
+  </body>
+</html>

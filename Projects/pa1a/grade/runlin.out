@@ -1,0 +1,746 @@
+
+
+2020-03-14 11:05                   Run Dong Lin                   Page 1
+
+Works ok, but overly complicated.
+
+
+  CS636 pa1a, first delivery of project 1 (10 points) Score: 10
+
+  setup OK, has pom.xml                                         
+  should have database dir, but not depending on it here
+  Register.java, in cs636.music.presentation
+  Single-class (or has helper classes) JDBC program
+  Preferably has connection setup based on parameters dbUrl, user, pw
+  Register.java inserts a row into site_user
+  
+  testing:                                                 
+    reload databases
+    mvn clean
+    mvn package
+    sh runOnOracle.sh Register
+    ant show-oradb to see new row (showdb.sql shows only site_user table)
+    sh runOnMysql.sh Register
+    ant show-mysqldb to see new row
+    sh runOnH2.sh Register
+
+Grading:
+Check for  new rows in database after oracle, mysql runs
+Read Register.java: 
+Look for connection setup, insert 
+-------Printing README if there-------------
+
+Note: to run this project on Windows or Linux/Mac with H2 (easiest way):
+0. Linux/Mac only: use "chmod +x *.sh database/*.sh" to make all shell scripts executable.
+
+1. cd to the database directory here.
+   Then "runMavenSql h2file createdb"  (runMavenSql.sh on Linux/Mac) to load the H2 database using createdb.sql
+   Note: this does not work on topcat yet. But you can use "ant load-h2".
+   Alternatively, use "runH2Script createdb.sql" (runH2Script.sh on Linux/Mac).
+   
+2. Use "mvn clean package" when cd'd to this directory to build the jar (in the target subdirectory)
+
+3. Then "runOnH2 SystemTest"  (runOnH2.sh on Linux/Mac) to run SystemTest out of the jar
+   Similarly "runOnH2 UserApp" and "runOnH2 AdminApp"
+
+To use a real DB: you need to define environment variables.
+ For Oracle database, set up env variables ORACLE_USER, ORACLE_PW, ORACLE_SITE
+ For MySQL use, set up env vars MYSQL_USER, MYSQL_PW, MYSQL_SITE
+ To run these at home, you need to set up tunnels for the JDBC connections.
+See DatabaseSetup linked to the class web page.
+----------------------pa1a-------------------------------
+/courses/cs636/s20/eoneil/runlin/pa1a:
+total 72
+-rw-r--r--  1 runlin ugrad     857 Mar 11 22:28 runOnH2_Register.txt
+-rw-r--r--  1 runlin ugrad    1015 Mar 11 22:27 runOnOracle_Register.txt
+-rw-r-xr--  1 runlin ugrad     891 Mar 11 22:26 runOnMysql_Register.txt
+drwxr-xr-x 10 runlin ugrad    4096 Mar 11 22:25 target
+-rwxr-xr--  1 runlin ugrad     328 Mar 11 20:38 runOnOracle.sh
+-rw-r--r--  1 runlin ugrad    4617 Mar 11 20:33 sampleRun.txt
+drwxr-xr--  3 runlin cs636-1G 4096 Mar 11 20:32 database
+drwxr-xr--  4 runlin cs636-1G 4096 Mar 11 01:43 src
+drwxr-xr--  6 runlin cs636-1G 4096 Mar 11 01:43 sound
+-rwxr-xr--  1 runlin cs636-1G  247 Feb 23 13:28 test.dat
+-rwxr-xr--  1 runlin cs636-1G  189 Feb 23 13:28 runOnH2.cmd
+-rwxr-xr--  1 runlin cs636-1G  188 Feb 23 13:28 runOnH2.sh
+-rwxr-xr--  1 runlin cs636-1G  322 Feb 23 13:28 runOnMysql.cmd
+-rwxr-xr--  1 runlin cs636-1G  318 Feb 23 13:28 runOnMysql.sh
+-rwxr-xr--  1 runlin cs636-1G  320 Feb 23 13:28 runOnOracle.cmd
+-rwxr-xr--  1 runlin cs636-1G 3019 Feb 23 13:28 pom.xml
+-rwxr-xr--  1 runlin cs636-1G 1048 Feb 23 13:28 README
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target:
+total 8456
+-rw-r--r-- 1 runlin ugrad 8578196 Mar 11 22:25 music1-1-jar-with-dependencies.jar
+drwxr-xr-x 2 runlin ugrad    4096 Mar 11 22:25 archive-tmp
+-rw-r--r-- 1 runlin ugrad   42547 Mar 11 22:25 music1-1.jar
+drwxr-xr-x 2 runlin ugrad    4096 Mar 11 22:25 maven-archiver
+drwxr-xr-x 2 runlin ugrad    4096 Mar 11 22:25 surefire-reports
+drwxr-xr-x 3 runlin ugrad    4096 Mar 11 22:25 test-classes
+drwxr-xr-x 3 runlin ugrad    4096 Mar 11 22:24 generated-test-sources
+drwxr-xr-x 3 runlin ugrad    4096 Mar 11 22:24 classes
+drwxr-xr-x 3 runlin ugrad    4096 Mar 11 22:24 generated-sources
+drwxr-xr-x 3 runlin ugrad    4096 Mar 11 22:24 maven-status
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/archive-tmp:
+total 0
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-archiver:
+total 4
+-rw-r--r-- 1 runlin ugrad 92 Mar 11 22:25 pom.properties
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/surefire-reports:
+total 24
+-rw-r--r-- 1 runlin ugrad 4825 Mar 11 22:25 TEST-cs636.music.dao.DownloadDAOTest.xml
+-rw-r--r-- 1 runlin ugrad  276 Mar 11 22:25 cs636.music.dao.DownloadDAOTest.txt
+-rw-r--r-- 1 runlin ugrad 4727 Mar 11 22:25 TEST-cs636.music.dao.ProductDAOTest.xml
+-rw-r--r-- 1 runlin ugrad  275 Mar 11 22:25 cs636.music.dao.ProductDAOTest.txt
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/test-classes:
+total 4
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:25 cs636
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/test-classes/cs636:
+total 4
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:25 music
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/test-classes/cs636/music:
+total 4
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:25 dao
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/test-classes/cs636/music/dao:
+total 12
+-rw-r--r-- 1 runlin ugrad 1697 Mar 11 22:25 DownloadDAOTest.class
+-rw-r--r-- 1 runlin ugrad 2345 Mar 11 22:25 InvoiceDAOTest1.class
+-rw-r--r-- 1 runlin ugrad  939 Mar 11 22:25 ProductDAOTest.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/generated-test-sources:
+total 4
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 test-annotations
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/generated-test-sources/test-annotations:
+total 0
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes:
+total 4
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:24 cs636
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636:
+total 4
+drwxr-xr-x 7 runlin ugrad 4096 Mar 11 22:24 music
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music:
+total 20
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 config
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 dao
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 domain
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 presentation
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:24 service
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/config:
+total 4
+-rw-r--r-- 1 runlin ugrad 2944 Mar 11 22:24 MusicSystemConfig.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/dao:
+total 32
+-rw-r--r-- 1 runlin ugrad 3369 Mar 11 22:24 DownloadDAO.class
+-rw-r--r-- 1 runlin ugrad 5089 Mar 11 22:24 InvoiceDAO.class
+-rw-r--r-- 1 runlin ugrad 2665 Mar 11 22:24 LineItemDAO.class
+-rw-r--r-- 1 runlin ugrad 1831 Mar 11 22:24 UserDAO.class
+-rw-r--r-- 1 runlin ugrad 1611 Mar 11 22:24 AdminDAO.class
+-rw-r--r-- 1 runlin ugrad  737 Mar 11 22:24 DBConstants.class
+-rw-r--r-- 1 runlin ugrad 2969 Mar 11 22:24 DbDAO.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/domain:
+total 32
+-rw-r--r-- 1 runlin ugrad 1885 Mar 11 22:24 Cart.class
+-rw-r--r-- 1 runlin ugrad  725 Mar 11 22:24 CartItem.class
+-rw-r--r-- 1 runlin ugrad 1487 Mar 11 22:24 Download.class
+-rw-r--r-- 1 runlin ugrad 2560 Mar 11 22:24 Invoice.class
+-rw-r--r-- 1 runlin ugrad 1742 Mar 11 22:24 LineItem.class
+-rw-r--r-- 1 runlin ugrad 2414 Mar 11 22:24 Product.class
+-rw-r--r-- 1 runlin ugrad 1456 Mar 11 22:24 Track.class
+-rw-r--r-- 1 runlin ugrad 1159 Mar 11 22:24 User.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/presentation:
+total 40
+-rw-r--r-- 1 runlin ugrad 4791 Mar 11 22:24 Register.class
+-rw-r--r-- 1 runlin ugrad 5896 Mar 11 22:24 SystemTest.class
+-rw-r--r-- 1 runlin ugrad 5422 Mar 11 22:24 UserApp.class
+-rw-r--r-- 1 runlin ugrad 4647 Mar 11 22:24 AdminApp.class
+-rw-r--r-- 1 runlin ugrad 6864 Mar 11 22:24 PresentationUtils.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/service:
+total 16
+-rw-r--r-- 1 runlin ugrad  932 Mar 11 22:24 UserService.class
+-rw-r--r-- 1 runlin ugrad 2204 Mar 11 22:24 AdminService.class
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 data
+-rw-r--r-- 1 runlin ugrad  705 Mar 11 22:24 ServiceException.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/classes/cs636/music/service/data:
+total 16
+-rw-r--r-- 1 runlin ugrad 1170 Mar 11 22:24 CartItemData.class
+-rw-r--r-- 1 runlin ugrad 1827 Mar 11 22:24 DownloadData.class
+-rw-r--r-- 1 runlin ugrad 1647 Mar 11 22:24 InvoiceData.class
+-rw-r--r-- 1 runlin ugrad  888 Mar 11 22:24 UserData.class
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/generated-sources:
+total 4
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 annotations
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/generated-sources/annotations:
+total 0
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status:
+total 4
+drwxr-xr-x 4 runlin ugrad 4096 Mar 11 22:24 maven-compiler-plugin
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status/maven-compiler-plugin:
+total 8
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:24 testCompile
+drwxr-xr-x 3 runlin ugrad 4096 Mar 11 22:24 compile
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status/maven-compiler-plugin/testCompile:
+total 4
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:25 default-testCompile
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile:
+total 8
+-rw-r--r-- 1 runlin ugrad 266 Mar 11 22:25 inputFiles.lst
+-rw-r--r-- 1 runlin ugrad 113 Mar 11 22:25 createdFiles.lst
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status/maven-compiler-plugin/compile:
+total 4
+drwxr-xr-x 2 runlin ugrad 4096 Mar 11 22:24 default-compile
+
+/courses/cs636/s20/eoneil/runlin/pa1a/target/maven-status/maven-compiler-plugin/compile/default-compile:
+total 8
+-rw-r--r-- 1 runlin ugrad 2539 Mar 11 22:24 inputFiles.lst
+-rw-r--r-- 1 runlin ugrad 1027 Mar 11 22:24 createdFiles.lst
+
+/courses/cs636/s20/eoneil/runlin/pa1a/database:
+total 76
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 lib-for-ant
+-rwxr-xr-- 1 runlin cs636-1G  989 Feb 23 13:28 load_downloads.sql
+-rwxr-xr-- 1 runlin cs636-1G 1024 Feb 23 13:28 README
+-rwxr-xr-- 1 runlin cs636-1G  113 Feb 23 13:28 runH2Script.cmd
+-rwxr-xr-- 1 runlin cs636-1G  113 Feb 23 13:28 runH2Script.sh
+-rwxr-xr-- 1 runlin cs636-1G  349 Feb 23 13:28 runMysqlScriptJDBC.cmd
+-rwxr-xr-- 1 runlin cs636-1G  345 Feb 23 13:28 runMysqlScriptJDBC.sh
+-rwxr-xr-- 1 runlin cs636-1G  175 Feb 23 13:28 runMysqlScript.sh
+-rwxr-xr-- 1 runlin cs636-1G  324 Feb 23 13:28 runOracleScriptJDBC.cmd
+-rwxr-xr-- 1 runlin cs636-1G  320 Feb 23 13:28 runOracleScriptJDBC.sh
+-rwxr-xr-- 1 runlin cs636-1G  193 Feb 23 13:28 runOracleScript.sh
+-rwxr-xr-- 1 runlin cs636-1G  178 Feb 23 13:28 showdb.sql
+-rwxr-xr-- 1 runlin cs636-1G 5251 Feb 23 13:28 build.xml
+-rwxr-xr-- 1 runlin cs636-1G 4401 Feb 23 13:28 createdb.sql
+-rwxr-xr-- 1 runlin cs636-1G  262 Feb 23 13:28 dropdb.sql
+-rwxr-xr-- 1 runlin cs636-1G  153 Feb 20 17:41 runMavenSql.cmd
+-rwxr-xr-- 1 runlin cs636-1G  146 Feb 20 17:41 runMavenSql.sh
+
+/courses/cs636/s20/eoneil/runlin/pa1a/database/lib-for-ant:
+total 7580
+-rwxr-xr-- 1 runlin cs636-1G 3692104 Feb 23 13:28 ojdbc6.jar
+-rwxr-xr-- 1 runlin cs636-1G 2134907 Feb 23 13:28 mysql-connector-java-8.0.14.jar
+-rwxr-xr-- 1 runlin cs636-1G 1927540 Feb 23 13:28 h2.jar
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src:
+total 8
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 test
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 main
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/test:
+total 4
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/test/java:
+total 4
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 cs636
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/test/java/cs636:
+total 4
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 music
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/test/java/cs636/music:
+total 4
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 dao
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/test/java/cs636/music/dao:
+total 12
+-rwxr-xr-- 1 runlin cs636-1G 2064 Feb 23 13:28 DownloadDAOTest.java
+-rwxr-xr-- 1 runlin cs636-1G 2340 Feb 23 13:28 InvoiceDAOTest1.java
+-rwxr-xr-- 1 runlin cs636-1G  804 Feb 23 13:28 ProductDAOTest.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main:
+total 4
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java:
+total 4
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 01:43 cs636
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636:
+total 4
+drwxr-xr-- 7 runlin cs636-1G 4096 Mar 11 06:42 music
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music:
+total 20
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 22:08 presentation
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 05:42 dao
+drwxr-xr-- 3 runlin cs636-1G 4096 Mar 11 02:44 service
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 domain
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 config
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/presentation:
+total 44
+-rw-r--r-- 1 runlin ugrad    5877 Mar 11 22:23 Register.java
+-rwxr-xr-- 1 runlin cs636-1G 7103 Mar 11 05:44 SystemTest.java
+-rwxr-xr-- 1 runlin cs636-1G 4439 Feb 23 13:28 AdminApp.java
+-rwxr-xr-- 1 runlin cs636-1G 5055 Feb 23 13:28 PresentationUtils.java
+-rwxr-xr-- 1 runlin cs636-1G 8907 Feb 23 13:28 UserApp.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/dao:
+total 32
+-rw-r-xr-- 1 runlin ugrad    1231 Mar 11 11:13 UserDAO.java
+-rw-r-xr-- 1 runlin ugrad    6331 Mar 11 11:07 InvoiceDAO.java
+-rwxr-xr-- 1 runlin cs636-1G 3459 Mar 11 06:21 DownloadDAO.java
+-rwxr-xr-- 1 runlin cs636-1G  875 Mar 11 06:18 DBConstants.java
+-rwxr-xr-- 1 runlin ugrad       0 Mar 11 05:42 ProductDAO.java
+-rwxr-xr-- 1 runlin cs636-1G 2958 Feb 23 13:28 DbDAO.java
+-rwxr-xr-- 1 runlin cs636-1G 2261 Feb 23 13:28 LineItemDAO.java
+-rwxr-xr-- 1 runlin cs636-1G 1016 Feb 23 13:28 AdminDAO.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/service:
+total 16
+-rw-r-xr-- 1 runlin ugrad    1216 Mar 11 11:13 UserService.java
+-rwxr-xr-- 1 runlin cs636-1G 2603 Mar 11 02:53 AdminService.java
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 02:44 data
+-rwxr-xr-- 1 runlin cs636-1G  662 Feb 23 13:28 ServiceException.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/service/data:
+total 16
+-rwxr-xr-- 1 runlin cs636-1G  967 Feb 23 13:28 CartItemData.java
+-rwxr-xr-- 1 runlin cs636-1G 1112 Feb 23 13:28 DownloadData.java
+-rwxr-xr-- 1 runlin cs636-1G 1194 Feb 23 13:28 InvoiceData.java
+-rwxr-xr-- 1 runlin cs636-1G  709 Feb 23 13:28 UserData.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/domain:
+total 32
+-rwxr-xr-- 1 runlin cs636-1G  863 Mar 11 06:49 User.java
+-rwxr-xr-- 1 runlin cs636-1G 1710 Mar 11 05:08 LineItem.java
+-rwxr-xr-- 1 runlin cs636-1G 2233 Mar 11 04:45 Invoice.java
+-rwxr-xr-- 1 runlin cs636-1G 1012 Feb 23 13:28 CartItem.java
+-rwxr-xr-- 1 runlin cs636-1G 2552 Feb 23 13:28 Cart.java
+-rwxr-xr-- 1 runlin cs636-1G 1207 Feb 23 13:28 Download.java
+-rwxr-xr-- 1 runlin cs636-1G 1957 Feb 23 13:28 Product.java
+-rwxr-xr-- 1 runlin cs636-1G 1023 Feb 23 13:28 Track.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/src/main/java/cs636/music/config:
+total 4
+-rwxr-xr-- 1 runlin cs636-1G 3538 Feb 23 13:28 MusicSystemConfig.java
+
+/courses/cs636/s20/eoneil/runlin/pa1a/sound:
+total 16
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 pf02
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 pf01
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 jr01
+drwxr-xr-- 2 runlin cs636-1G 4096 Mar 11 01:43 8601
+
+/courses/cs636/s20/eoneil/runlin/pa1a/sound/pf02:
+total 480
+-rwxr-xr-- 1 runlin cs636-1G 269128 Feb 23 13:28 neon.mp3
+-rwxr-xr-- 1 runlin cs636-1G    888 Feb 23 13:28 sound.html
+-rwxr-xr-- 1 runlin cs636-1G 213224 Feb 23 13:28 tank.mp3
+
+/courses/cs636/s20/eoneil/runlin/pa1a/sound/pf01:
+total 432
+-rwxr-xr-- 1 runlin cs636-1G 203297 Feb 23 13:28 corvair.mp3
+-rwxr-xr-- 1 runlin cs636-1G   1166 Feb 23 13:28 sound.html
+-rwxr-xr-- 1 runlin cs636-1G 233090 Feb 23 13:28 whiskey.mp3
+
+/courses/cs636/s20/eoneil/runlin/pa1a/sound/jr01:
+total 396
+-rwxr-xr-- 1 runlin cs636-1G 201751 Feb 23 13:28 so_long.mp3
+-rwxr-xr-- 1 runlin cs636-1G 193643 Feb 23 13:28 filter.mp3
+-rwxr-xr-- 1 runlin cs636-1G   1050 Feb 23 13:28 sound.html
+
+/courses/cs636/s20/eoneil/runlin/pa1a/sound/8601:
+total 616
+-rwxr-xr-- 1 runlin cs636-1G 295791 Feb 23 13:28 star.mp3
+-rwxr-xr-- 1 runlin cs636-1G 325319 Feb 23 13:28 no_difference.mp3
+-rwxr-xr-- 1 runlin cs636-1G    844 Feb 23 13:28 sound.html
+------Reloading databases-----
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+drop-oradb:
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 1 second
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+load-oradb:
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+drop-mysqldb:
+      [sql] Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+load-mysqldb:
+      [sql] Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+drop-h2:
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+load-h2:
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+------Cleaning up using pom.xml-----
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< cs636:music1 >----------------------------
+[INFO] Building music1 1
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ music1 ---
+[INFO] Deleting /home/eoneil/636/pa1a.grading/work/target
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.472 s
+[INFO] Finished at: 2020-03-14T12:11:21-04:00
+[INFO] ------------------------------------------------------------------------
+------Compiling using pom.xml------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< cs636:music1 >----------------------------
+[INFO] Building music1 1
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ music1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/eoneil/636/pa1a.grading/work/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.0:compile (default-compile) @ music1 ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 29 source files to /home/eoneil/636/pa1a.grading/work/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ music1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/eoneil/636/pa1a.grading/work/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.0:testCompile (default-testCompile) @ music1 ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 3 source files to /home/eoneil/636/pa1a.grading/work/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ music1 ---
+[INFO] Surefire report directory: /home/eoneil/636/pa1a.grading/work/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Running cs636.music.dao.ProductDAOTest
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.577 sec
+Running cs636.music.dao.DownloadDAOTest
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.097 sec
+
+Results :
+
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ music1 ---
+[INFO] Building jar: /home/eoneil/636/pa1a.grading/work/target/music1-1.jar
+[INFO] 
+[INFO] --- maven-assembly-plugin:3.1.1:single (make-assembly) @ music1 ---
+[INFO] Building jar: /home/eoneil/636/pa1a.grading/work/target/music1-1-jar-with-dependencies.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.038 s
+[INFO] Finished at: 2020-03-14T12:11:33-04:00
+[INFO] ------------------------------------------------------------------------
+------Running Oracle test-------------
+runOnOracle.sh: 1: runOnOracle.sh: music#: not found
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+dbUrl : jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+usr : cs636test
+pw : cs636test
+DbDAO constructor called with jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'Run', 'Lin', 'runlin@umb.edu') 
+Register user complete, exiting...
+----looking at Oracle db after insert-------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+show-oradb:
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/showdb.sql
+      [sql] USER_ID,FIRSTNAME,LASTNAME,EMAIL_ADDRESS,COMPANY_NAME,ADDRESS1,ADDRESS2,CITY,STATE,ZIP,COUNTRY,CREDITCARD_TYPE,CREDITCARD_NUMBER,CREDITCARD_EXPIRATIONDATE
+      [sql] 1,Run,Lin,runlin@umb.edu,null,null,null,null,null,null,null,null,null,null
+      [sql] 
+      [sql] 0 rows affected
+      [sql] 1 of 1 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 1 second
+------Running MySql test-------------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+dbUrl : jdbc:mysql://topcat.cs.umb.edu/eoneil1db
+usr : eoneil1
+pw : eoneil1
+DbDAO constructor called with jdbc:mysql://topcat.cs.umb.edu/eoneil1db
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'Run', 'Lin', 'runlin@umb.edu') 
+Register user complete, exiting...
+----looking at MySQL db after insert-------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1a.grading/build.xml
+
+show-mysqldb:
+      [sql] Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+      [sql] Executing resource: /home/eoneil/636/pa1a.grading/showdb.sql
+      [sql] user_id,firstname,lastname,email_address,company_name,address1,address2,city,state,zip,country,creditcard_type,creditcard_number,creditcard_expirationdate
+      [sql] 1,Run,Lin,runlin@umb.edu,null,null,null,null,null,null,null,null,null,null
+      [sql] 
+      [sql] 0 rows affected
+      [sql] 1 of 1 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+-------checking for Register source in right place--------
+src/main/java/cs636/music/presentation/Register.java:	public static void main(String[] args) {
+-------checking for package decl in Register source----------
+src/main/java/cs636/music/presentation/Register.java:package cs636.music.presentation;
+-------Printing Register source in cs636.music.presentation------
+/**
+ * Create the tables in Oracle first and write a program Register (in cs636.music.presentation) 
+ * to insert a new user, directly, no User object, no "DAO" yet. 
+ * This brute force starter program follows the idea of using 
+ * all the pieces of the needed technology as soon as possible.  
+ * Elegance can wait a bit.
+ * 
+ * Register.java should accept database information the way SystemTest does, but it has no input file. 
+ * Don’t take any user input for the information about the new user but rather just invent values in the program. 
+ * Note that you can run Register using the already existent scripts runOnH2, runOnOracle, and runOnMysql.
+ */
+package cs636.music.presentation;
+
+import static cs636.music.dao.DBConstants.USER_TABLE;
+import static cs636.music.dao.DBConstants.SYS_TABLE;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.DriverManager;
+
+import static cs636.music.dao.DBConstants.*;
+
+public class Register
+{
+	private static Connection connection;
+
+	/**
+	 * Insert user data into user
+	 * 
+	 * @param first first_name
+	 * @param last  last_name
+	 * @param email email_address
+	 * @throws SQLException
+	 */
+	public static void registerUser(String first, String last, String email) throws SQLException {
+		/**
+		 * CREATE TABLE site_user ( 
+		 * user_id INT NOT NULL, 
+		 * firstname VARCHAR(50) NOT NULL, 
+		 * lastname VARCHAR(50) NOT NULL, 
+		 * email_address VARCHAR(50) NOT NULL,
+		 * ...
+		 * UNIQUE(email_address), 
+		 * PRIMARY KEY (user_id) 
+		 * );
+		 */
+		// COMMON PROBLEM WITH EMAIL, and strings in general:
+		// https://stackoverflow.com/questions/42186938/sql-syntax-error-mariadb-server-version-for-the-right-syntax-to-use-near-hotma
+		Statement stmt = connection.createStatement();
+		try {
+			if (findUser(email))
+			{
+				System.out.println("User with email: '" + email + "' already exist!");
+			}
+			else
+			{
+				long userID = getNextUserID();
+				String sqlString = "insert into " + USER_TABLE + 
+				" (user_id, firstname, lastname, email_address) values ("
+				+ userID + ", " + "'"+first+"'" + ", "
+				+ "'" +last+ "'" + ", " + "'" +email+ "'" + ") ";
+				stmt.execute(sqlString);
+				System.out.println("SQL code: " + sqlString);
+				System.out.println("Register user complete, exiting...");
+			}
+		} finally {
+			stmt.close();
+		}
+	}
+
+	/**
+	 * Get the available user id 
+	 * @return the line item id available 
+	 * @throws SQLException
+	 */
+	private static long getNextUserID() throws SQLException
+	{
+		int nextLID;
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet set = stmt.executeQuery(" select user_id from " + SYS_TABLE);
+			set.next();
+			nextLID = set.getInt("user_id");
+		} finally {
+			stmt.close();
+		}
+		advanceUserID(); // the id has been taken, so set +1 for next one
+		return nextLID;
+	}
+
+	/**
+	 * Increase user_id by 1 in the system table
+	 * @throws SQLException
+	 */
+	private static void advanceUserID() throws SQLException
+	{
+		Statement stmt = connection.createStatement();
+		try {
+			stmt.executeUpdate(" update " + SYS_TABLE + " set user_id = user_id + 1");
+		} finally {
+			stmt.close();
+		}
+	}
+
+	/**
+	 * find user if it already exist
+	 * 
+	 * @param email
+	 * @return
+	 * @throws SQLException
+	 */
+	public static Boolean findUser(String email) throws SQLException {
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet set = stmt.executeQuery("select user_id from " + USER_TABLE + " where email_address = " + "'"+email+"'");
+			if (set.next()){ // if the result is not empty
+				set.close();
+				return true;
+			}
+		} finally {
+			stmt.close();
+		}
+		return false;
+	}
+	
+	// borrowed from DbDAO.java
+	public static void connect(String dbUrl, String usr, String passwd) throws SQLException {
+		if (dbUrl == null) {
+			System.out.println("DbDAO constructor: replacing null dbUrl with " + H2_URL);
+			dbUrl = H2_URL; // default to H2, an embedded DB
+			usr = "test";
+			passwd = "";
+		} else {
+			System.out.println("DbDAO constructor called with " + dbUrl);
+		}
+
+		// Although simple JDBC apps no longer need Class.forName lookups, we are
+		// using a jar with all three drivers in it and this confuses the
+		// automatic driver location by JDBC. So we do it the old way.
+		String dbDriverName;
+		if (dbUrl.contains("mysql"))
+			dbDriverName = MYSQL_DRIVER;
+		else if (dbUrl.contains("oracle"))
+			dbDriverName = ORACLE_DRIVER;
+		else if (dbUrl.contains("h2"))
+			dbDriverName = H2_DRIVER;
+		else
+			throw new SQLException("Unknown DB URL " + dbUrl);
+
+		try {
+			Class.forName(dbDriverName); // as done with JDBC before v4
+		} catch (Exception e) {
+			System.out.println("can't find driver " + dbDriverName);
+		}
+		connection = DriverManager.getConnection(dbUrl, usr, passwd);
+	}
+
+	public static void main(String[] args) {
+		String dbUrl = null;
+		String usr = null;
+		String pw = null;
+		String first = "Run";
+		String last = "Lin";
+		String email = "runlin@umb.edu";
+
+		if (args.length == 0) {
+			// handle H2
+		}
+		else if (args.length == 3) {
+			dbUrl = args[0];
+			usr = args[1];
+			pw = args[2];
+		} else {
+			System.out.println("usage:java <dbURL> <user> <passwd> ");
+			return;
+		}
+		System.out.println("dbUrl : " + dbUrl);
+		System.out.println("usr : " + usr);
+		System.out.println("pw : " + pw);
+		/**
+		 * Don’t take any user input for the information about the new user but rather
+		 * just invent values in the program.
+		 */
+		try {
+			connect(dbUrl, usr, pw);
+			//connection = DriverManager.getConnection(dbUrl, usr, pw);
+			registerUser( first, last, email );
+		} catch (Exception e) {
+			System.out.println("Error in registering user.");
+			e.printStackTrace();
+		}
+	}
+}
+

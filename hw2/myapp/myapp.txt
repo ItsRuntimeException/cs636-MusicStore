@@ -1,0 +1,60 @@
+Script started on Mon 24 Feb 2020 12:38:31 AM EST
+runlin@topcat:~/cs636/hw2/myapp$ mvn clean package
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------------------< [0;36mcs636:myapp[0;1m >-----------------------------[m
+[[1;34mINFO[m] [1mBuilding jdbcCheckup 1[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(default-clean)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] Deleting /courses/cs636/s20/eoneil/runlin/hw2/myapp/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:resources[m [1m(default-resources)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /courses/cs636/s20/eoneil/runlin/hw2/myapp/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.8.0:compile[m [1m(default-compile)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:testResources[m [1m(default-testResources)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /courses/cs636/s20/eoneil/runlin/hw2/myapp/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.8.0:testCompile[m [1m(default-testCompile)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-surefire-plugin:2.12.4:test[m [1m(default-test)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] No tests to run.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-jar-plugin:2.4:jar[m [1m(default-jar)[m @ [36mmyapp[0;1m ---[m
+[[1;33mWARNING[m] JAR will be empty - no content was marked for inclusion!
+[[1;34mINFO[m] Building jar: /courses/cs636/s20/eoneil/runlin/hw2/myapp/target/myapp-1.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-assembly-plugin:3.1.1:single[m [1m(make-assembly)[m @ [36mmyapp[0;1m ---[m
+[[1;34mINFO[m] Building jar: /courses/cs636/s20/eoneil/runlin/hw2/myapp/target/myapp-1-jar-with-dependencies.jar
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  5.280 s
+[[1;34mINFO[m] Finished at: 2020-02-24T00:38:47-05:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+runlin@topcat:~/cs636/hw2/myapp$ ls
+JdbcCheckup.class  JdbcCheckup.java  myapp.txt	pom.xml  runOnMysql.sh	target	test.dat
+runlin@topcat:~/cs636/hw2/myapp$ ./runOnMysql.sh
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Please enter information to test connection to the database
+Using Oracle (o), MySql (m) or H2 (h)? m
+user: runlin
+password: runlin
+host: localhost
+port (often 3306): 3306
+using connection string: jdbc:mysql://localhost:3306/runlindb
+Connecting to the database...connected.
+Hello World!
+Your JDBC installation is correct.
+runlin@topcat:~/cs636/hw2/myapp$ exit
+exit
+
+Script done on Mon 24 Feb 2020 12:40:49 AM EST

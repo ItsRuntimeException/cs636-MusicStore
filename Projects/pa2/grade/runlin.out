@@ -1,0 +1,1276 @@
+
+
+2020-05-10 16:56                   Run Dong Lin                   Page 1
+
+
+
+
+
+													Excellent job.
+		CS636 music3 project (PA2)             Total:  _35_/35
+
+     DB app with transactions, now with JSP UI,
+     specifically JSP with Spring Boot controllers
+ 
+  Partner:
+
+  Java sources:                                                   10/10
+  config: provided
+  domain: as in music1, provided
+  service: provided
+  dao: provided
+  presentation.web:
+    All projects should have Spring controllers for the user pages
+    Partnerships should have controllers for admin pages, but
+     only 5pts off if not.
+    Can have two user-page controller, for Sales and Catalog, but 
+      this is an extra (a step towards microservices)
+    May have UserBean: holds needed session vars user (UserData), cart,
+      can have Product.  Anyway, need session vars in use.
+
+  JSPs for page flow:  compose response HTML using vars           10/10
+      set up in servlet
+   user side: following page flow diagram 
+   admin side: optional for individual, part of 5 pts for partnerships
+
+  mvn testing :                                                    5/5
+    mvn clean package
+  curl testing:
+    access webcome.html, web system test url
+      to check that provided code still works
+ 
+  Web testing:                                                     5/5
+    start executable on port 9000
+    after a few seconds:
+    browse to /music3 or /pa2
+    choose browse-catalog
+    check that list of CDs shown, with links for each, also show-cart
+    follow link for a CD
+    add to cart
+    should show cart, choose continue shopping
+    follow link for another CD
+    choose listen
+    should be required register with name, email
+    listen to a track
+    add to cart
+    choose checkout
+    see invoice page
+
+for partnerships: (automatic 5 for individuals)                    5/5
+    try admin pages too:  see AdminApp for basic UI
+    login as andrea, password sesame
+
+
+2020-05-10 16:56                   Run Dong Lin                   Page 2
+
+
+    See choice of process invoice, display reports, init DB
+    For process invoices, see list of invoices, choice of one to process
+    For reports, choice of invoices, downloads
+
+
+    
+----------------------pa2-------------------------------
+----------------------pa2 top level dirs-----------------
+7652	/courses/cs636/s20/eoneil/runlin/pa2//database
+8	/courses/cs636/s20/eoneil/runlin/pa2//pom.xml
+4	/courses/cs636/s20/eoneil/runlin/pa2//README
+4	/courses/cs636/s20/eoneil/runlin/pa2//runJarByProfile.cmd
+4	/courses/cs636/s20/eoneil/runlin/pa2//runJarByProfile.sh
+4	/courses/cs636/s20/eoneil/runlin/pa2//runMvnByProfile.cmd
+4	/courses/cs636/s20/eoneil/runlin/pa2//runMvnByProfile.sh
+2344	/courses/cs636/s20/eoneil/runlin/pa2//src
+30400	/courses/cs636/s20/eoneil/runlin/pa2//target
+----------------------pa2 website dirs----------------
+4	/courses/cs636/s20/eoneil/runlin/pa2//src/main/webapp/includes
+1944	/courses/cs636/s20/eoneil/runlin/pa2//src/main/webapp/sound
+12	/courses/cs636/s20/eoneil/runlin/pa2//src/main/webapp/styles
+64	/courses/cs636/s20/eoneil/runlin/pa2//src/main/webapp/WEB-INF
+4	/courses/cs636/s20/eoneil/runlin/pa2//src/main/webapp/welcome.jsp
+------- README or README.txt, etc.----------------
+
+Note: to run this project on Windows or Linux/Mac with the embedded DB H2 (easiest way):
+0. If running on topcat, edit src/main/resources/application.properties and
+  set the port to one of your assigned ports, preferably xxxx3 to follow
+  our conventions (for example, 51303). See CS636Ports.html for your ports.
+
+1. Drop and load the music database (the tables have changed a little)
+   cd to the database directory here.
+   and use the db tools there, same as in pizza1 and music1 and pizza3
+   
+2. Use "mvn clean package" when cd'd to this directory to build/rebuild the jar
+
+3. On Linux or Mac, use "chmod +x *.sh" to make all shell scripts in this directory
+ executable, and similarly for the database directory. 
+
+4. Run the program to start tomcat with the webapp: using convenience script
+    runJarByProfile h2 web  (Windows)   
+or  runJarByProfile.sh h2 web (Linux or Mac)
+or using mvn directly (see contents of runMvnByProfile). Either way, let it hang.
+
+5. Browse to localhost:9003/welcome.html to see the top-level page. Replace 9003 here
+with your own port ending in 3 if running on topcat.
+
+6. Run all the JUnit tests with mvn test. They are also run during mvn package.
+
+7. The old line-oriented programs can be run outside of tomcat:
+    runJarByProfile h2 SystemTest  (Windows)   (or TakeOrder or ShopAdmin)
+or  runJarByProfile.sh h2 SystemTest  (Linux or Mac)
+or  runMvnByProfile h2 SystemTest, etc.
+
+To use a real DB: you need to define environment variables (same as for music1)
+ For Oracle database, set up env variables ORACLE_USER, ORACLE_PW, ORACLE_SITE
+ For MySQL use, set up env vars MYSQL_USER, MYSQL_PW, MYSQL_SITE
+Then these are accessed from the profiles to setup the JDBC config.
+So you can run simply  runJarByProfile oracle web   for example, and
+let it hang.  Use a browser to run the webapp as in step 5.
+
+Inside eclipse:
+For development and debugging, run SBApplication as a Java app inside eclipse,
+or debug as a Java app. By default these will run the web case using Oracle.
+To run using H2, define an eclipse Run configuration with VM arg 
+-Dspring.profiles.active=h2 (look in the Arguments tab). To run SystemTest, 
+add the program arg SystemTest in the Arguments tab.
+
+Note: if H2 executions are giving funny errors, esp. ones complaining about accessing 
+pages, just reinitialize it: cd to your home directory (c:\Users\username on Windows)
+and delete file test-music.mv.db, then reload the db
+------Reloading dbs--------------------------------
+
+------Cleaning up using pom.xml-----------------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< cs636:music3 >----------------------------
+[INFO] Building pizza3 1
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ music3 ---
+[INFO] Deleting /home/eoneil/636/pa2.grading/runlin-work/target
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.027 s
+[INFO] Finished at: 2020-05-12T14:50:18-04:00
+[INFO] ------------------------------------------------------------------------
+------Compiling using pom.xml---------------------
+----last 10 lines of output(see /home/eoneil/636/pa2.grading/output/runlin.out.package for more)--
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.1.12.RELEASE:repackage (default) @ music3 ---
+[INFO] Layout: JAR
+[INFO] Replacing main artifact with repackaged archive
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.198 s
+[INFO] Finished at: 2020-05-12T14:50:29-04:00
+[INFO] ------------------------------------------------------------------------
+------For runs, see end of listing------------------
+-------Printing changes to java files !!----------------
+--------No problem if up to say 100 lines of changes--
+--------more than that is suspicious (using old solution?)
+---------------------------------------------------------
+--------changes to config: not needed-------------------
+---------------------------------------------------------
+--------changes to (upper) presentation: not needed----
+Common subdirectories: /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/presentation/client and src/main/java/cs636/music/presentation/client
+Common subdirectories: /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/presentation/web and src/main/java/cs636/music/presentation/web
+--------changes to domain: none expected ----------------
+diff -b /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/domain/CartItem.java src/main/java/cs636/music/domain/CartItem.java
+17a18
+> 	private Product product;
+27a29,33
+> 	public CartItem (Product product, int quantity) {
+> 		this.product = product;
+> 		this.quantity = quantity;
+> 	}
+> 	
+31a38,41
+> 	public Product getProduct() {
+> 		return product;
+> 	}
+> 
+37a48,51
+> 	}
+> 
+> 	public void setProduct(Product product) {
+> 		this.product = product;
+diff -b /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/domain/Cart.java src/main/java/cs636/music/domain/Cart.java
+91a92,104
+> 	/**
+> 	 * Remove an item with given item from this cart 
+> 	 * @param item the product need to be removed 
+> 	 */
+> 	public void removeItem(CartItem item) {
+> 		String code = item.getProduct().getCode();
+> 		for (CartItem l : items) {
+> 			if (l.getProduct().getCode().equals(code)) {
+> 				items.remove(l);
+> 				return;
+> 			}
+> 		}
+>     }
+---------------------------------------------------------
+---------------------------------------------------------
+----changes to service: none needed---
+Common subdirectories: /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/service/data and src/main/java/cs636/music/service/data
+diff -b /data/htdocs/cs636/music3-setup/src/main/java/cs636/music/service/UserService.java src/main/java/cs636/music/service/UserService.java
+140a141,158
+> 	 * Update a product in the cart.
+> 	 * 
+> 	 * @param prod
+> 	 * @param cart
+> 	 * @param quantity
+> 	 */
+> 	public void updateIteminCart(Product prod, Cart cart, int quantity) {
+> 		CartItem item = cart.findItem(prod.getId());
+> 		if (item != null) { // product is already in the cart, add quantity
+> 			item.setQuantity(quantity);
+> 		} else { // not in the cart, add new item with quantity
+> 			item = new CartItem(prod.getId(), quantity);
+> 			// cart.addItem(item);
+> 			cart.getItems().add(item);
+> 		}
+> 	}
+> 
+> 	/**
+---------------------------------------------------------
+----changes to dao: none needed---
+---------------------------------------------------------
+-----------END OF CHANGES SECTION-----------------
+---------------------------------------------------------
+-----------Looking at presentation/web--------------------
+-----------presentation/web file listing--------------------
+total 36
+-rw-r--r-- 1 eoneil faculty 4311 May  8 14:27 AdminController.java
+-rw-r--r-- 1 eoneil faculty 6385 May  8 17:46 CatalogController.java
+-rw-r--r-- 1 eoneil faculty 9025 May  8 17:41 SalesController.java
+-rw-r--r-- 1 eoneil faculty 2016 May  1 10:44 SysTestServlet.java
+-rw-r--r-- 1 eoneil faculty 1546 May  8 06:48 UserBean.java
+---------Printing *Bean source (if any)------------------
+// This is the session bean (POJO) for the user-oriented web pages
+// It is created in the UserWelcomeController, and if the user happens
+// on another page first, the user is forwarded to that page.
+// This bean holds information for the user across the various
+// page visits.
+package cs636.music.presentation.web;
+
+import cs636.music.domain.Cart;
+import cs636.music.service.data.UserData;
+
+public class UserBean {
+	// Here we have gathered together all the needed session variables
+	// but these could all be separate session variables, or hybrid scheme
+	private UserData loggedInUser = null; 
+	// Need to remember product across registration for listening to samples
+	private String productCode;  // chosen product for product page, sound page
+	private Cart cart = null;
+	// Need to remember we're doing checkout through registration step
+	private boolean doingCheckout = false;  // set by beginCheckout, cleared by checkout
+
+	public UserBean() {}
+	
+	public UserData getUser() {
+		return loggedInUser;
+	}
+
+	public void setUser(UserData user) {
+		this.loggedInUser = user;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public boolean isDoingCheckout() {
+		return doingCheckout;
+	}
+
+	public void setDoingCheckout(boolean doingCheckout) {
+		this.doingCheckout = doingCheckout;
+	}
+}
+---------Printing *Controller source --------------------
+package cs636.music.presentation.web;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import cs636.music.domain.Cart;
+import cs636.music.domain.CartItem;
+import cs636.music.domain.LineItem;
+import cs636.music.domain.Product;
+import cs636.music.service.ServiceException;
+import cs636.music.service.UserService;
+import cs636.music.service.data.InvoiceData;
+import cs636.music.service.data.UserData;
+
+@Controller
+public class SalesController {
+	@Autowired
+	private UserService userService;
+		
+	// String constants for URLs
+	private static final String USER_WELCOME_URL = "/userWelcome.html";
+	private static final String USER_WELCOME_VIEW = "/WEB-INF/jsp/userWelcome";
+	private static final String PRODUCT_URL = "/product.html";
+	
+	private static final String REGISTER_URL = "/register.html";
+	private static final String BEGIN_CHECKOUT_URL = "/beginCheckout.html";
+	private static final String CHECKOUT_URL = "/checkout.html";
+	private static final String INVOICE_VIEW = "/WEB-INF/jsp/invoice";
+	private static final String REGISTER_FORM_VIEW = "/WEB-INF/jsp/registerForm";
+
+	@RequestMapping(USER_WELCOME_URL)
+	public String userWelcome(HttpServletRequest request) throws ServletException {
+		
+		HttpSession session = request.getSession();	
+		// See if this user already has a bean.  If not, put one in session.
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		if (userBean == null) {
+			userBean = new UserBean();
+			session.setAttribute("user", userBean);
+		}
+		return USER_WELCOME_VIEW;
+	}
+	
+	// This method is meant to be invoked in two ways:
+	//  -- to handle a request from the checkout page 
+	//        in this case the UserBean has isDoingCheckout == true
+	//        and this forwards to the checkout handler in this controller
+	//  -- to handle a request from the listen page 
+	//        in this case the UserBean has isDoingCheckout == false
+	//        and this forwards to the listen handler in the CatalogController
+	@RequestMapping(REGISTER_URL)
+	public String register(@RequestParam() String firstName, @RequestParam() String lastName, 
+			 @RequestParam() String email, HttpServletRequest request) throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		UserData user = userBean.getUser();
+		
+		if (user == null) {
+			try { // The user registered just before getting to this page - create user
+				userService.registerUser(firstName, lastName, email);
+				user = userService.getUserInfo(email);
+				userBean.setUser(user);
+				System.out.println("user registered");
+			} catch (ServiceException e) {
+				System.out.println("ListenController: " + e);
+				throw new ServletException(e);
+			}
+		}
+		
+		session.setAttribute("user", userBean);
+		boolean doingCheckout = userBean.isDoingCheckout();
+		System.out.println("Returning from RegisterController");
+		return doingCheckout?"forward:" + CHECKOUT_URL:"forward:" + PRODUCT_URL;
+	}
+	
+	@RequestMapping(BEGIN_CHECKOUT_URL)
+	public String beginCheckout(HttpServletRequest request)
+			throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+		// Here with userBean object available, get it
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		userBean.setDoingCheckout(true);  // remember across registration if necessary
+		UserData user = userBean.getUser();  // may be null: user needs to register
+		System.out.println("Returning from BeginCheckoutController");
+		return user != null ? "forward:" + CHECKOUT_URL: REGISTER_FORM_VIEW;
+	}
+	
+	@RequestMapping(CHECKOUT_URL)
+	public String checkout(HttpServletRequest request) throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+	
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		userBean.setDoingCheckout(false);  // now handled, re-initialize for future
+		Cart userCart = userBean.getCart();
+		UserData user = userBean.getUser();
+		assert(user != null);  // should register before this if needed
+		InvoiceData invoice = null;
+		try {
+			invoice = userService.checkout(userCart, user.getId());
+		} catch (ServiceException e) {
+			System.out.println("CheckoutController: " + e);
+			throw new ServletException(e);
+		}
+		request.setAttribute("invoice", invoice);
+		session.setAttribute("user", userBean);
+		return INVOICE_VIEW;
+	}
+	
+	@RequestMapping("/addItem.html")
+	private String addItem(HttpServletRequest request) throws ServiceException {
+		HttpSession session = request.getSession();
+		String productCode = request.getParameter("productCode");
+		Cart cart = (Cart) session.getAttribute("cart");
+		UserBean userBean = (UserBean) session.getAttribute("user");
+        Product product = null;
+        if (cart == null)
+            cart = new Cart();
+		try {
+			product = userService.getProduct(productCode);
+		} catch (Exception e) {
+			System.out.println("caught product error.");
+		}
+        if (product != null) {
+			userService.addItemtoCart(product, cart, 1);
+		}
+
+		userBean.setCart(cart);
+		session.setAttribute("user", userBean);
+		session.setAttribute("cart", cart);
+		session.setAttribute("quantity", 1);
+		session.setAttribute("productCode", productCode);
+        String CART_URL = "/cart.html";
+        return "forward:"+ CART_URL;
+	}
+	
+	@RequestMapping("/updateCart.html")
+	private String updateCartItem(HttpServletRequest request) throws ServiceException {
+		HttpSession session = request.getSession();
+		String quantityString = request.getParameter("quantity");
+        String productCode = request.getParameter("productCode");
+		Cart cart = (Cart) session.getAttribute("cart");
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		Product product = null;
+        int quantity;
+        try {
+            quantity = Integer.parseInt(quantityString);
+            if (quantity < 0)
+                quantity = 1;
+        } catch (NumberFormatException ex) {
+            quantity = 1;
+        }
+		try {
+			product = userService.getProduct(productCode);
+		} catch (Exception e) {
+			System.out.println("caught product error.");
+		}
+        if (product != null && cart != null) {
+            if (quantity > 0)
+				userService.updateIteminCart(product, cart, quantity);
+            else
+				userService.removeCartItem(product, cart);
+		}
+		userBean.setCart(cart);
+		session.setAttribute("user", userBean);
+		session.setAttribute("cart", cart);
+		session.setAttribute("quantity", 1);
+		session.setAttribute("productCode", productCode);
+		String CART_URL = "/cart.html";
+        return "forward:"+ CART_URL;
+	}
+
+	@RequestMapping("/removeItem.html")
+	private String removeItem(HttpServletRequest request) throws ServiceException {
+		HttpSession session = request.getSession();
+		String productCode = request.getParameter("productCode");
+		UserBean userBean = (UserBean) session.getAttribute("user");
+        Cart cart = (Cart) session.getAttribute("cart");
+		Product product = null;
+		try {
+			product = userService.getProduct(productCode);
+		} catch (Exception e) {
+			System.out.println("caught product error.");
+		}
+        if (product != null && cart != null) {
+			userService.removeCartItem(product, cart);
+		}
+		userBean.setCart(cart);
+		session.setAttribute("user", userBean);
+		session.setAttribute("cart", cart);
+		session.setAttribute("quantity", 0);
+		session.setAttribute("productCode", productCode);
+        String CART_URL = "/cart.html";
+        return "forward:"+ CART_URL;
+	}
+	
+	// check for user bean, meaning user has already visited the user welcome
+	// page and obtained the user bean, so known to the system
+	// package scope to let SalesController use this too
+	static boolean checkUser(HttpServletRequest request) {
+		System.out.print("checkUser: ");
+		boolean hasBean = (request.getSession().getAttribute("user") != null);
+		if (hasBean) {
+			UserBean bean = (UserBean) request.getSession().getAttribute("user");
+			if (bean.getUser() == null)
+				System.out.println("bean has no user");
+			else
+				System.out.println("bean's user:" + bean.getUser().getEmailAddress());
+			if (bean.getCart() == null)
+				System.out.println("bean has no cart");
+			else
+				System.out.println("bean's cart itemcount = " + bean.getCart().getItems().size());
+		} else {
+			System.out.println("no user bean in session");
+		}
+		return hasBean;
+	}
+}
+package cs636.music.presentation.web;
+
+import java.util.Set;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import cs636.music.config.MusicSystemConfig;
+import cs636.music.service.AdminService;
+import cs636.music.service.ServiceException;
+import cs636.music.service.data.DownloadData;
+import cs636.music.service.data.InvoiceData;
+// For partnerships: finish this controller code and its JSPs
+// for individual projects: Just leave this as is, admins can use AdminApp
+
+@Controller
+public class AdminController {
+
+	@Autowired
+	private AdminService adminService; 
+
+	private static final String ADMIN_BASE_URL = "/adminController/";
+	private static final String ADMIN_JSP_DIR = "/WEB-INF/admin/";
+
+	@RequestMapping(ADMIN_BASE_URL + "adminWelcome.html")
+	public String handleAdminLogin(Model model, @RequestParam(required = false) String username,
+			@RequestParam(required = false) String password, HttpServletRequest request) throws ServletException {
+		String uname = (String) request.getSession().getAttribute("adminUser");
+		if (uname != null) {
+			return ADMIN_JSP_DIR + "adminMenu"; // already logged in
+		}
+
+		if (username != null && password != null) {
+			try {
+				Boolean adminExistence = adminService.checkLogin(username, password);
+				// Success: Need to transfer the admin to the Admin Menu page
+				// Bad credentials: Need to make the admin stay at the same login page.
+				// Inform user 'Invalid Credentials'.
+				if (adminExistence) {
+					// save uname as session variable
+					request.getSession().setAttribute("adminUser", username);
+					return ADMIN_JSP_DIR + "adminMenu";
+				} else {
+					request.setAttribute("error", "Invalid Credentials");
+					return ADMIN_JSP_DIR + "adminLogin";
+				}
+			} catch (ServiceException e) {
+				String error = "Error in checking credentials: " + e;
+				request.setAttribute("error", error);
+				return ADMIN_JSP_DIR + "error";
+			}
+		}
+		// missing or incomplete username/password: show login page
+		else {
+			return ADMIN_JSP_DIR + "adminLogin";
+		}
+	}
+	
+	@RequestMapping(ADMIN_BASE_URL+"listVariables.html")
+	public String listVariables(Model model) {	
+		String url = ADMIN_JSP_DIR + "listVariables";
+		return url;
+	}
+	
+	@RequestMapping(ADMIN_BASE_URL + "logout.html")
+	public String logout(Model model, HttpServletRequest request) {
+		request.getSession().invalidate(); // drop session
+		String url = ADMIN_JSP_DIR + "logout";
+		return url;
+	}
+
+	@RequestMapping(ADMIN_BASE_URL + "processInvoices.html")
+	public String processInvoices(Model model, HttpServletRequest request) throws ServletException {
+		if (!checkAdmin(request))
+			return "forward:" + ADMIN_BASE_URL + "adminWelcome.html";
+		// TODO code, other url
+		String url = ADMIN_JSP_DIR + "error";
+		return url;
+	}
+
+	@RequestMapping(ADMIN_BASE_URL + "initDB.html")
+	public String initializeDB(Model model, HttpServletRequest request) throws ServletException {
+		if (!checkAdmin(request))
+			return "forward:" + ADMIN_BASE_URL + "adminWelcome.html";
+		// TODO code
+		String url = ADMIN_JSP_DIR + "initializeDB";
+		return url;
+	}
+
+	@RequestMapping(ADMIN_BASE_URL + "displayReports.html")
+	public String displayReports(Model model, HttpServletRequest request) throws ServletException {
+		if (!checkAdmin(request))
+			return "forward:" + ADMIN_BASE_URL + "adminWelcome.html";
+		// TODO code, other url
+		String url = ADMIN_JSP_DIR + "error";
+		return url;
+	}
+
+	@RequestMapping(ADMIN_BASE_URL + "processInvoice.html")
+	public String processInvoice(Model model, @RequestParam() long invoiceId, HttpServletRequest request)
+			throws ServletException {
+		if (!checkAdmin(request))
+			return "forward:" + ADMIN_BASE_URL + "adminWelcome.html";
+		//TODO code
+		return "forward:/adminController/processInvoices.html";
+	}
+
+	boolean checkAdmin(HttpServletRequest request) {
+		boolean isAdmin = (request.getSession().getAttribute("adminUser") != null);
+		return isAdmin;
+	}
+}
+package cs636.music.presentation.web;
+
+// TODO: pa2: add methods here to service URLs listed below
+// which involve forwarding to JSPs listed below as VIEWs or in some cases
+// to URLs
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import cs636.music.dao.DownloadDAO;
+import cs636.music.domain.Cart;
+import cs636.music.domain.CartItem;
+import cs636.music.domain.Download;
+import cs636.music.domain.Product;
+import cs636.music.domain.Track;
+import cs636.music.domain.User;
+import cs636.music.presentation.client.PresentationUtils;
+import cs636.music.service.ServiceException;
+import cs636.music.service.UserService;
+import cs636.music.service.data.CartItemData;
+import cs636.music.service.data.UserData;
+
+@Controller
+public class CatalogController {
+	@Autowired
+	private UserService userService;
+
+	// String constants for URL's : please use these!
+	private static final String WELCOME_URL = "/welcome.html";
+	private static final String WELCOME_VIEW = "/welcome";
+	private static final String USER_WELCOME_URL = "/userWelcome.html";
+	private static final String CATALOG_URL = "/catalog.html";
+	private static final String CATALOG_VIEW = "/WEB-INF/jsp/catalog";
+	private static final String CART_URL = "/cart.html";
+	private static final String CART_VIEW = "/WEB-INF/jsp/cart";
+	private static final String PRODUCT_URL = "/product.html";
+	private static final String PRODUCT_VIEW = "/WEB-INF/jsp/product";
+	private static final String LISTEN_URL = "/listen.html";
+	private static final String SOUND_VIEW = "/WEB-INF/jsp/sound";
+	private static final String DOWNLOAD_URL = "/download.html"; // download.html didn't work
+	private static final String REGISTER_FORM_VIEW = "/WEB-INF/jsp/registerForm";
+
+	@RequestMapping(WELCOME_URL)
+	public String handleWelcome() {
+		return WELCOME_VIEW;
+	}
+	@RequestMapping("")
+	public String handleWelcomeBlank() {
+		return WELCOME_VIEW;
+	}
+
+	@RequestMapping(CATALOG_URL)
+	public String catalog(HttpServletRequest request) {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+		
+		// Here with userBean object available, get it
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		UserData user = userBean.getUser();  // may be null: user needs to register
+		assert(user != null);
+		
+		session.setAttribute("user", userBean);
+		return CATALOG_VIEW;
+	}
+
+	@RequestMapping(CART_URL)
+	public String cart(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+
+		// Here with userBean object available, get it
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		Cart cart = null;
+		Set<CartItemData> cdata = null;
+		try {
+			cart = userBean.getCart();
+			cdata = userService.getCartInfo(cart);
+			if (cart != null && cart.getItems().size() > 0 || cdata != null && cdata.size() > 0) {
+				session.setAttribute("cart", cart);
+				session.setAttribute("cdata", cdata);
+			}
+			else {
+				session.setAttribute("cart", null);
+				session.setAttribute("cdata", null);
+			}
+		} catch (ServiceException e) {
+			throw new ServletException(e);
+		}
+		UserData user = userBean.getUser();  // may be null: user needs to register
+		assert(user != null);
+		
+		session.setAttribute("user", userBean);
+		return user != null? CART_VIEW : REGISTER_FORM_VIEW;
+	}
+
+	@RequestMapping(PRODUCT_URL)
+	public String product(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+
+		// Here with userBean object available, get it
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		String prodCode = userBean.getProductCode();
+		UserData user = userBean.getUser();  // may be null: user needs to register
+		assert(user != null);
+		Product product = null;
+		try {
+			product = userService.getProduct(prodCode);
+		} catch (ServiceException e) {
+			System.out.println("ProductController: " + e);
+			throw new ServletException(e);
+		}
+		session.setAttribute("productCode", prodCode);
+		session.setAttribute("product", product);
+		session.setAttribute("user", userBean);
+		return user != null? PRODUCT_VIEW : REGISTER_FORM_VIEW;
+	}
+
+	@RequestMapping(LISTEN_URL)
+	public String listen(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		if (!checkUser(request))
+			return "forward:" + USER_WELCOME_URL;
+
+		// Here with userBean object available, get it
+		HttpSession session = request.getSession();
+		UserBean userBean = (UserBean) session.getAttribute("user");
+		UserData user = userBean.getUser();  // may be null: user needs to register
+		session.setAttribute("user", userBean);
+		return user != null? SOUND_VIEW : REGISTER_FORM_VIEW;
+	}
+
+	// check for user bean, meaning user has already visited the user welcome
+	// page and obtained the user bean, so known to the system
+	// package scope to let SalesController use this too
+	static boolean checkUser(HttpServletRequest request) {
+		System.out.print("checkUser: ");
+		boolean hasBean = (request.getSession().getAttribute("user") != null);
+		if (hasBean) {
+			UserBean bean = (UserBean) request.getSession().getAttribute("user");
+			if (bean.getUser() == null)
+				System.out.println("bean has no user");
+			else
+				System.out.println("bean's user:" + bean.getUser().getEmailAddress());
+			if (bean.getCart() == null)
+				System.out.println("bean has no cart");
+			else
+				System.out.println("bean's cart itemcount = " + bean.getCart().getItems().size());
+		} else {
+			System.out.println("no user bean in session");
+		}
+		return hasBean;
+	}
+}
+-----Looking at JSP files under webapp and its subdirs---
+-------should see about 7 related to user pages----------
+-------userWelcome, catalog, cart, product or similar names--
+-------also invoice and sound or similar names-----------
+-------possibly jsps for each CD, like 8601_info.jsp ----
+-rw-r--r-- 1 eoneil faculty 674 May  8 10:59 src/main/webapp/WEB-INF/jsp/sound.jsp
+-rw-r--r-- 1 eoneil faculty 711 May  8 10:02 src/main/webapp/WEB-INF/jsp/registerForm.jsp
+-rw-r--r-- 1 eoneil faculty 623 May  1 10:44 src/main/webapp/WEB-INF/jsp/invoice.jsp
+-rw-r--r-- 1 eoneil faculty 452 May  8 08:52 src/main/webapp/WEB-INF/jsp/userWelcome.jsp
+-rw-r--r-- 1 eoneil faculty 2466 May  8 17:46 src/main/webapp/WEB-INF/jsp/cart.jsp
+-rw-r--r-- 1 eoneil faculty 1583 May  8 14:36 src/main/webapp/WEB-INF/jsp/product.jsp
+-rw-r--r-- 1 eoneil faculty 908 May  8 08:51 src/main/webapp/WEB-INF/jsp/userPageForm.jsp
+-rw-r--r-- 1 eoneil faculty 394 May  8 10:06 src/main/webapp/WEB-INF/jsp/catalog.jsp
+-rw-r--r-- 1 eoneil faculty 693 May  1 10:44 src/main/webapp/WEB-INF/admin/adminMenu.jsp
+-rw-r--r-- 1 eoneil faculty 349 May  1 10:44 src/main/webapp/WEB-INF/admin/error.jsp
+-rw-r--r-- 1 eoneil faculty 397 May  1 10:44 src/main/webapp/WEB-INF/admin/logout.jsp
+-rw-r--r-- 1 eoneil faculty 605 May  1 10:44 src/main/webapp/WEB-INF/admin/adminLogin.jsp
+-rw-r--r-- 1 eoneil faculty 837 May  1 10:44 src/main/webapp/WEB-INF/admin/listVariables.jsp
+-rw-r--r-- 1 eoneil faculty 401 May  8 13:19 src/main/webapp/welcome.jsp
+-------Printing JSP files under webapp----------
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Catalog</title>
+</head>
+<body>
+    <h1>The Fresh Corn Records Catalog</h1>
+
+    <h2>86 (the band)</h2>
+    <p><a href="../../sound/8601/sound.html">True Life Songs and Pictures</a></p>
+    
+    <h2>Paddlefoot</h2>
+    <p><a href="../../sound/pf01/sound.html">Paddlefoot (the first album)</a></p>
+    <p><a href="../../sound/pf02/sound.html">Paddlefoot (the second album)</a></p>
+
+    <h2>Joe Rut</h2>
+    <p><a href="../../sound/jr01/sound.html">Genuine Wood Grained Finish</a></p>    
+
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Music Store :: Register</title>
+</head>
+<body>
+<h1>Register</h1>
+<h2>Create a user account or sign in</h2>
+
+		<form method="get" action="register.html">
+			First name: <input type="text" name="firstName"> <br />
+			Last name: <input type="text" name="lastName"> <br />
+			Email Address: <input type="text" name="email"> <br />
+			<input type="submit" value="Register">
+		</form>
+
+<ul>	
+	<li><a href="catalog.html">Browse Catalog </a> </li>
+	<li><a href="cart.html">View Cart </a> </li>
+	<li><a href="userWelcome.html">User Home </a> </li>
+</ul>
+
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Music Store :: Invoice</title>
+</head>
+<body>
+<h1>Invoice</h1>
+<h2>Thanks for your order!</h2>
+
+<ul>
+	<li>Invoice number: ${invoice.invoiceId}</li>
+	<li>Total price: ${invoice.totalAmount}</li>
+	<!-- It would be nice to show lineitems, but we are not supporting them in InvoiceData -->
+</ul>
+
+<ul>	
+	<li><a href="catalog.html">Browse Catalog </a> </li>
+	<li><a href="cart.html">View Cart</a> </li>
+	<li><a href="userWelcome.html">User Home </a> </li>
+</ul>
+
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Music Store</title>
+</head>
+<body>
+	<h1>Welcome to the Music Store!</h1>
+	<h2>Where would you like to go?</h2>
+
+	<uL>
+		<li><a href="catalog.html">Browse Catalog </a></li>
+		<li><a href="cart.html">View Cart </a></li>
+		<li><a href="welcome.html">Back to Site Homepage </a></li>
+	</ul>
+
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Cart Page</title>
+<link href="../../styles/main.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Your cart</h1>
+  <c:choose>
+      <c:when test="${cart == null || cdata == null}">
+          <p>Your cart is empty.</p>
+      </c:when>
+      <c:otherwise>
+        <table>
+           <tr>
+            <th>Qty</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>&nbsp;</th>
+         </tr>
+          <c:forEach var="item" items="${cdata}">
+            <tr class="cart_row">
+              <td>
+                <form method="POST" action="updateCart.html">
+                  <input type="hidden" name="productCode"
+                         value="<c:out value='${item.code}'/>">
+                  <input type=text name="quantity"
+                         value="<c:out value='${item.quantity}'/>" id="quantity">
+                  <input type="submit" value="Update">
+                </form>
+              </td>
+              <td>${item.description}</td>
+              <td>${item.quantity}</td>
+              <td>${item.price*item.quantity}</td>
+              <td>
+                <form method="POST" action="removeItem.html">
+                  <input type="hidden" name="productCode"
+                         value="<c:out value='${item.code}'/>">
+                  <input type="submit" value="Remove">
+                </form>
+              </td>
+            </tr>
+          </c:forEach>
+            <tr>
+              <td colspan="2">
+                <p><b>To change the quantity for an item</b>, enter the new quantity 
+                      and click on the Update button.</p>
+                <p><b>To remove an item</b>, click on the Remove button.</p>
+              </td>
+              <td colspan="3">&nbsp;</td>
+            </tr>
+          </table>
+      </c:otherwise>
+  </c:choose>
+
+  
+  <form method="GET" action="product.html">
+    <input type="submit" value="Return to Product Page">
+  </form>
+
+  <form method="GET" action="userWelcome.html">
+    <input type="submit" value="Return to Main Page">
+  </form>
+
+  <!-- Connection is NOT SECURE.  For testing only. -->
+  <form method="GET" action="beginCheckout.html">
+		<input type="submit" value="Checkout">
+	</form>
+    
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Product Page</title>
+</head>
+<body>
+    <h1>Our Products</h1>
+
+    <h2>86 (the band)</h2>
+    <p><a href="../../sound/8601/sound.html">True Life Songs and Pictures</a></p>
+    <td>
+        <form method="POST" action="addItem.html">
+          <input type="hidden" name="productCode"
+                  value="8601">
+          <input type="submit" value="Add to Cart">
+        </form>    
+    </td>
+
+    <br>
+
+    <h2>Paddlefoot</h2>
+    <p><a href="../../sound/pf01/sound.html">Paddlefoot (the first album)</a></p>
+    <td>
+        <form method="POST" action="addItem.html">
+          <input type="hidden" name="productCode"
+                  value="pf01">
+          <input type="submit" value="Add to Cart">
+        </form>
+    </td>
+    <p><a href="../../sound/pf02/">Paddlefoot (the second album)</a></p>
+    <td>
+        <form method="POST" action="addItem.html">
+          <input type="hidden" name="productCode"
+                  value="pf02">
+          <input type="submit" value="Add to Cart">
+        </form>    
+    </td>
+
+    <br>
+
+    <h2>Joe Rut</h2>
+    <p><a href="../../sound/jr01/sound.html">Genuine Wood Grained Finish</a></p>
+    <td>
+        <form method="POST" action="addItem.html">
+          <input type="hidden" name="productCode"
+                  value="jr01">
+          <input type="submit" value="Add to Cart">
+        </form>
+    </td>
+
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Music Store :: User Page</title>
+</head>
+<body>
+	<h1>Register Customer and Customer Address</h1>
+	<h2>Create a user customer account with contact
+		information${fName} ${lName} ${emailAddr}</h2>
+
+	<form method="get" action="userPage.html">
+		First name: <input type="text" name="firstName" value="${firstName}"><br> 
+		Last name: <input type="text" name="lastName" value="${lastName}"> <br> 
+		Email Address: <input type="text" name="email" value="${emailAddr}"> <br>
+		StreetAddress: <input type="text" name="address"> <br> 
+		<input type="submit" value="Register">
+	</form>
+
+	<ul>
+		<li><a href="catalog.html">Browse Catalog </a></li>
+		<li><a href="cart.html">View Cart </a></li>
+		<li><a href="userWelcome.html">User Home </a></li>
+	</ul>
+</body>
+</html>
+<!DOCTYPE HTML>
+<%@page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html>
+<head>
+<title>Catalog Page</title>
+</head>
+<body>
+    <h1>Catalog</h1>
+        <ul>
+            <li><a href="product.html">Browse Products</a></li>
+            <li><a href="listen.html">Listen to Products</a></li>
+        </ul>
+</body>
+</html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Menu</title>
+</head>
+<body>
+	<h1>Admin Menu</h1>
+	
+	<form action="initDB.html" method="get">
+		<input type="submit" value="Initialize DB"><br />
+	</form>
+	<form action="processInvoices.html" method="get">
+		<input type="submit" value="Process Invoices"><br />
+	</form>
+	<form action="displayReports.html" method="get">
+		<input type="submit" value="Display Reports"><br />
+	</form>
+		<form action="logout.html" method="get">
+		<input type="submit" value="Logout"><br />
+	</form>
+
+</body>
+</html><%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>DB Error</title>
+</head>
+<body>
+	<h1>DB Error: ${error}</h1>
+	<br> 
+	<br> 
+	<a href="adminWelcome.html"> Back to Admin Menu</a>
+	
+</body>
+</html><%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Logout Page</title>
+</head>
+<body>
+ 
+	<h1>You are now logged out</h1>
+	<p>(i.e., your session is terminated)</p>
+	<p><a href="/welcome.html">Back to Site Homepage</a></p>
+
+</body>
+</html><%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login Page</title>
+</head>
+<body>
+
+	<c:if test="${error=='Invalid Credentials'}" var="error"
+		scope="request">
+		<I>Invalid Credentials. Enter Correct Credentials</I>
+	</c:if>
+
+	<form action="adminWelcome.html" method="post">
+		Username:<input type="text" name="username" /> <br /> Password:<input
+			type="password" name="password" /> <br /> <input type="submit"
+			value="login" />
+	</form>
+
+</body>
+</html><%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>List Variables Page</title>
+</head>
+<body>
+
+<h1>Cookies in this request: </h1>
+<!-- cookie is an implicit object of JSP, see pg. 217 -->
+<c:forEach items="${cookie}" var="cook">
+<!-- cook is a map entry, with key (cookie name) and value (cookie object) -->
+	  <br>Cookie:	${cook.key} = ${cook.value.value}
+</c:forEach>
+
+
+<h1>Session vars in this session:</h1>
+<!-- sessionScope is an implicit object of JSP, a map of session vars -->
+<c:forEach items="${sessionScope}" var="v">
+<!-- v is a map entry, with key (var name) and value (var object) -->
+	  <br>Session var:	${v.key} = ${v.value} 
+</c:forEach>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Music Store System</title>
+</head>
+<h1>Service Options</h1>
+<body>
+	<ul>
+		<li><a href="/adminController/adminWelcome.html">Admin Service</a></li>
+		<li><a href="userWelcome.html">User Service</a></li>
+		<li><a href="/adminController/listVariables.html">List Variables</a></li>
+		<li><a href="/adminController/logout.html">Logout</a></li>
+	</ul>
+</body>
+</html>
+
+
+---------------------------------------------------------
+----------------TESTING CLIENT-SERVER ORACLE-------------
+------runJarByProfile.sh oracle SystemTest, output to file--
+------ oracle SysTest output file size: ------------------
+-rw-rw-r-- 1 eoneil faculty 4330 May 12 14:50 /home/eoneil/636/pa2.grading/output/runlin.out.oraCSSysTest
+---------------CLIENT-SERVER MYSQL-----------------------
+------runJarByProfile.sh mysql SystemTest, output to file--
+------ mysql SysTest output file size: --------------------
+-rw-rw-r-- 1 eoneil faculty 4082 May 12 14:50 /home/eoneil/636/pa2.grading/output/runlin.out.mysqlCSSysTest
+---------------TESTING WEB ORACLE------------------------
+---------------using port 9000 specified on command line---
+------Oracle webTest1: GET /welcome.html------------------
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   401  100   401    0     0    361      0  0:00:01  0:00:01 --:--:--   361100   401  100   401    0     0    361      0  0:00:01  0:00:01 --:--:--   361
+<!DOCTYPE html>
+<html>
+<head>
+<title>Music Store System</title>
+</head>
+<h1>Service Options</h1>
+<body>
+	<ul>
+		<li><a href="/adminController/adminWelcome.html">Admin Service</a></li>
+		<li><a href="userWelcome.html">User Service</a></li>
+		<li><a href="/adminController/listVariables.html">List Variables</a></li>
+		<li><a href="/adminController/logout.html">Logout</a></li>
+	</ul>
+</body>
+</html>
+
+
+------Oracle webSysTest: GET /servlet/SystemTestServlet---
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   195  100   195    0     0    350      0 --:--:-- --:--:-- --:--:--   350
+<!DOCTYPE HTML>
+<HTML>
+  <HEAD><TITLE>A Servlet running SystemTest</TITLE></HEAD>
+  <BODY>
+ <h2> SystemTest Result </h2>
+<p> Success</p>
+<p> for more info, see console log </p>
+  </BODY>
+</HTML>
+------Oracle webSysTest done------------------------------
+---------------WEB MYSQL---------------------------------
+---------------using port 9009 specified on command line---
+---------------DONE! See /home/eoneil/636/pa2.grading/output/runlin.out.tomcat for tomcat log--------
+

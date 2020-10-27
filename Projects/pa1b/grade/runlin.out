@@ -1,0 +1,2010 @@
+
+
+2020-04-01 09:39                   Run Dong Lin                   Page 1
+
+
+
+	CS636 Programming Project 1 pa1b				Remarks:Debug ProductDAO_findUserByEmail
+															Implement AdminService methods
+															Clean up your code (Remove // TODO ...)
+
+	music1 project final delivery                   Total:  _30_/35
+
+        due Sat., March 28, midnight
+
+        late days: __1_
+
+  sources:                                                     23/25
+  config: MusicSystemConfig: provided                          
+  presentation:
+        SystemTest, UserApp, as proper presentation classes:    7 pts
+          --calls the service layer via the service API
+          --does not call DAO directly, only via service layer
+          --uses getters of domain classes, but not setters.
+          --doesn't create domain objects
+        complete presentation: AdminApp fixed up                 1 pt
+
+  domain: Murach's business classes: provided, may change a little
+
+  service: UserService.java, AdminService.java (or ...), 
+             ServiceException.java plus any helpers
+    service API: looks complete, returns only *Data, Product, 
+          Track to preentation                                   4 pts
+          --no JDBC in this code
+    implementation of core service API methods:                  5 pts
+          --do no JDBC themselves! 
+          --register a user: fname, lname, email
+          --get list of products
+          --get info for given prodId
+          --get info for given userId
+          --record download for user of certain product, certain track
+                   or equiv info
+          --create cart 
+          --add a product to the cart 
+          --get list of downloads
+        rest of service API:                                      2 pts          
+
+  dao: ProductDAO.java or ProductDB.java, UserDAO or ...          6 pts
+        --code to do all JDBC actions.
+        --can be mostly from Murach's code 
+        --should use our setup of DAO singletons, not static methods
+	--get DB data into domain objects as needed for service methods
+        Note there are various ways to provide dependent objects
+             so many solutions are possible
+
+  testing (pa1b):                                                 7/10
+    reload all databases
+    mvn clean
+    mvn package
+    runOnOracle.sh SystemTest
+    runOnMysql.sh SystemTest
+    runOnH2.sh SystemTest
+    SystemTests should show some good output, all be the same 3pts
+    additionally, one point each for visible output from SystemTest, i.e,
+
+
+2020-04-01 09:39                   Run Dong Lin                   Page 2
+
+
+    looking at best DB output: check command ouput for
+    gp, gpi, gui, gti, sc, gi, gd  7 in all
+
+----------------------pa1 java files-----------------------
+-rwxrwxrwx  1 runlin ugrad 6190 Feb 24 00:27 JdbcCheckup.java
+-rwxrwxrwx 1 runlin ugrad 2134907 Feb 23 13:28 mysql-connector-java-8.0.14.jar
+drwxrwxrwx 3 runlin ugrad 4096 Mar 28 16:05 java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/domain:
+-rwxrwxrwx 1 runlin ugrad 1023 Mar 29 05:35 Track.java
+-rwxrwxrwx 1 runlin ugrad 1172 Mar 29 04:52 Download.java
+-rwxrwxrwx 1 runlin ugrad 1061 Mar 29 03:54 User.java
+-rwxrwxrwx 1 runlin ugrad 1280 Mar 29 01:18 CartItem.java
+-rwxrwxrwx 1 runlin ugrad 1286 Mar 29 00:52 LineItem.java
+-rwxrwxrwx 1 runlin ugrad 2318 Mar 29 00:45 Invoice.java
+-rwxrwxrwx 1 runlin ugrad 3297 Mar 29 00:09 Cart.java
+-rwxrwxrwx 1 runlin ugrad 2237 Mar 28 22:50 Product.java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/config:
+-rwxrwxrwx 1 runlin ugrad 3812 Mar 28 21:24 MusicSystemConfig.java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/dao:
+-rwxrwxrwx 1 runlin ugrad 3757 Mar 29 05:42 UserDAO.java
+-rwxrwxrwx 1 runlin ugrad 3528 Mar 29 05:11 DownloadDAO.java
+-rwxrwxrwx 1 runlin ugrad 6990 Mar 29 04:52 ProductDAO.java
+-rwxrwxrwx 1 runlin ugrad 6227 Mar 29 04:25 InvoiceDAO.java
+-rwxrwxrwx 1 runlin ugrad 2338 Mar 29 03:29 LineItemDAO.java
+-rwxrwxrwx 1 runlin ugrad 2958 Mar 28 22:38 DbDAO.java
+-rwxrwxrwx 1 runlin ugrad  875 Mar 28 22:38 DBConstants.java
+-rwxrwxrwx 1 runlin ugrad 1016 Mar 28 22:38 AdminDAO.java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/presentation:
+-rwxrwxrwx 1 runlin ugrad 10539 Mar 29 06:09 UserApp.java
+-rwxrwxrwx 1 runlin ugrad  8253 Mar 29 05:41 SystemTest.java
+-rwxrwxrwx 1 runlin ugrad  2743 Mar 28 23:10 Register.java
+-rwxrwxrwx 1 runlin ugrad  5055 Mar 28 22:50 PresentationUtils.java
+-rwxrwxrwx 1 runlin ugrad  4439 Mar 28 22:50 AdminApp.java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/service:
+-rwxrwxrwx 1 runlin ugrad 6953 Mar 29 05:41 UserService.java
+-rwxrwxrwx 1 runlin ugrad 3045 Mar 29 01:34 AdminService.java
+-rwxrwxrwx 1 runlin ugrad  662 Feb 23 13:28 ServiceException.java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/main/java/cs636/music/service/data:
+-rwxrwxrwx 1 runlin ugrad  709 Mar 29 01:54 UserData.java
+-rwxrwxrwx 1 runlin ugrad 1194 Mar 29 01:29 InvoiceData.java
+-rwxrwxrwx 1 runlin ugrad  967 Feb 23 13:28 CartItemData.java
+-rwxrwxrwx 1 runlin ugrad 1112 Feb 23 13:28 DownloadData.java
+drwxrwxrwx 3 runlin ugrad 4096 Mar 28 16:05 java
+/courses/cs636/s20/eoneil/runlin/pa1b/src/test/java:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/test/java/cs636:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/test/java/cs636/music:
+/courses/cs636/s20/eoneil/runlin/pa1b/src/test/java/cs636/music/dao:
+-rwxrwxrwx 1 runlin ugrad 2324 Mar 29 02:19 InvoiceDAOTest1.java
+-rwxrwxrwx 1 runlin ugrad 2034 Mar 29 02:17 DownloadDAOTest.java
+-rwxrwxrwx 1 runlin ugrad  796 Mar 29 02:17 ProductDAOTest.java
+---------------------------------------------------------
+------- README or README.txt ----------------
+
+Note: to run this project on Windows or Linux/Mac with H2 (easiest way):
+0. Linux/Mac only: use "chmod +x *.sh database/*.sh" to make all shell scripts executable.
+
+1. cd to the database directory here.
+   Then "runMavenSql h2file createdb"  (runMavenSql.sh on Linux/Mac) to load the H2 database using createdb.sql
+   Note: this does not work on topcat yet. But you can use "ant load-h2".
+   Alternatively, use "runH2Script createdb.sql" (runH2Script.sh on Linux/Mac).
+   
+2. Use "mvn clean package" when cd'd to this directory to build the jar (in the target subdirectory)
+
+3. Then "runOnH2 SystemTest"  (runOnH2.sh on Linux/Mac) to run SystemTest out of the jar
+   Similarly "runOnH2 UserApp" and "runOnH2 AdminApp"
+
+To use a real DB: you need to define environment variables.
+ For Oracle database, set up env variables ORACLE_USER, ORACLE_PW, ORACLE_SITE
+ For MySQL use, set up env vars MYSQL_USER, MYSQL_PW, MYSQL_SITE
+ To run these at home, you need to set up tunnels for the JDBC connections.
+See DatabaseSetup linked to the class web page.
+------Reloading databases-----
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+drop-oradb:
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+load-oradb:
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+drop-mysqldb:
+      [sql] Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+load-mysqldb:
+      [sql] Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+drop-h2:
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/dropdb.sql
+      [sql] 9 of 9 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Buildfile: /home/eoneil/636/pa1b.grading/work/database/build.xml
+
+load-h2:
+      [sql] Executing resource: /home/eoneil/636/pa1b.grading/work/database/createdb.sql
+      [sql] 28 of 28 SQL statements executed successfully
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+------Cleaning up using pom.xml-----
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< cs636:music1 >----------------------------
+[INFO] Building music1 1
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ music1 ---
+[INFO] Deleting /home/eoneil/636/pa1b.grading/work/target
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.486 s
+[INFO] Finished at: 2020-04-01T09:48:54-04:00
+[INFO] ------------------------------------------------------------------------
+------Compiling using pom.xml---
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------------< cs636:music1 >----------------------------
+[INFO] Building music1 1
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ music1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/eoneil/636/pa1b.grading/work/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.0:compile (default-compile) @ music1 ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 29 source files to /home/eoneil/636/pa1b.grading/work/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ music1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/eoneil/636/pa1b.grading/work/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.0:testCompile (default-testCompile) @ music1 ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 3 source files to /home/eoneil/636/pa1b.grading/work/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ music1 ---
+[INFO] Surefire report directory: /home/eoneil/636/pa1b.grading/work/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Running cs636.music.dao.ProductDAOTest
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.592 sec
+Running cs636.music.dao.DownloadDAOTest
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'doe', 'schmo', 'doe@joe.com') 
+Register user complete, exiting...
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test-music
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'doe', 'schmo', 'doe@joe.com') 
+Register user complete, exiting...
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.119 sec
+
+Results :
+
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ music1 ---
+[INFO] Building jar: /home/eoneil/636/pa1b.grading/work/target/music1-1.jar
+[INFO] 
+[INFO] --- maven-assembly-plugin:3.1.1:single (make-assembly) @ music1 ---
+[INFO] Building jar: /home/eoneil/636/pa1b.grading/work/target/music1-1-jar-with-dependencies.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.476 s
+[INFO] Finished at: 2020-04-01T09:49:06-04:00
+[INFO] ------------------------------------------------------------------------
+------Running Oracle SystemTest-------------
+runOnOracle.sh: 1: runOnOracle.sh: music#: not found
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+running SystemTest, calling config with: jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3 cs636test cs636test
+configureServices: dbUrl = jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3, usr =cs636testpw = cs636test
+TEMPORARY (remove this println): Stub implementation of configureServices, does not use DB fully yet
+DbDAO constructor called with jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+
+
+*************i***************
+
+Initializing system
+----OK
+
+
+*************gp***************
+
+----------CD CATALOG--------------
+
+ Prod Code 	 Product Description
+
+8601	86 (the band) - True Life Songs and Pictures
+jr01	Joe Rut - Genuine Wood Grained Finish
+pf01	Paddlefoot - The first CD
+pf02	Paddlefoot - The second CD
+-------------------------------------
+----OK
+
+
+*************gpi pf01***************
+
+----------PRODUCT INFORMATION--------------
+
+
+ProductCode : pf01
+ Description : Paddlefoot - The first CD
+ Price : 12.95
+----------PRODUCT INFORMATION--------------
+
+----OK
+
+
+*************ureg  joe smith joe@cs.umb.edu***************
+
+Registering user: joe smith joe@cs.umb.edu
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'joe', 'smith', 'joe@cs.umb.edu') 
+Register user complete, exiting...
+----OK
+
+
+*************ureg  sue cohen sue@cs.umb.edu***************
+
+Registering user: sue cohen sue@cs.umb.edu
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (2, 'sue', 'cohen', 'sue@cs.umb.edu') 
+Register user complete, exiting...
+----OK
+
+
+*************gui sue@cs.umb.edu***************
+
+java.sql.SQLException: Invalid column name
+
+No such user: sue@cs.umb.edu
+
+----OK
+
+
+*************gti pf01***************
+
+
+-----------------TRACKS for pf01--------------
+
+	TrackNo	FileName	Title	Prod Code
+
+	6	corvair.mp3	64 Corvair, Part 2	 pf01
+---------------------------------------------------
+----OK
+
+
+*************dl joe@cs.umb.edu jr01 1***************
+
+java.sql.SQLException: Invalid column name
+
+No such user
+
+----OK
+
+
+*************cc***************
+
+
+ cart created 
+----OK
+
+
+*************addli pf01***************
+
+
+ Added to Cart..
+----OK
+
+
+*************sc***************
+
+
+ Now displaying Cart...
+
+-----------------C A R T--------------
+
+	Prod Code	Qty
+
+	pf01	1
+---------------------------------------------------
+----OK
+
+
+*************co sue@cs.umb.edu***************
+
+java.sql.SQLException: Invalid column name
+
+No such user
+
+----OK
+
+
+*************setproc 1***************
+
+Error in run of SystemTest: 
+cs636.music.service.ServiceException: Error in processInvoice
+  cause: java.lang.NullPointerExceptioncs636.music.service.ServiceException: Error in processInvoice
+	at cs636.music.service.UserService.processInvoice(UserService.java:197)
+	at cs636.music.presentation.SystemTest.run(SystemTest.java:191)
+	at cs636.music.presentation.SystemTest.main(SystemTest.java:67)
+Caused by: java.lang.NullPointerException
+	at cs636.music.service.UserService.processInvoice(UserService.java:194)
+	... 2 more
+
+------Running MySql SystemTest-------------
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+running SystemTest, calling config with: jdbc:mysql://topcat.cs.umb.edu/eoneil1db eoneil1 eoneil1
+configureServices: dbUrl = jdbc:mysql://topcat.cs.umb.edu/eoneil1db, usr =eoneil1pw = eoneil1
+TEMPORARY (remove this println): Stub implementation of configureServices, does not use DB fully yet
+DbDAO constructor called with jdbc:mysql://topcat.cs.umb.edu/eoneil1db
+
+
+*************i***************
+
+Initializing system
+----OK
+
+
+*************gp***************
+
+----------CD CATALOG--------------
+
+ Prod Code 	 Product Description
+
+pf01	Paddlefoot - The first CD
+pf02	Paddlefoot - The second CD
+jr01	Joe Rut - Genuine Wood Grained Finish
+8601	86 (the band) - True Life Songs and Pictures
+-------------------------------------
+----OK
+
+
+*************gpi pf01***************
+
+----------PRODUCT INFORMATION--------------
+
+
+ProductCode : pf01
+ Description : Paddlefoot - The first CD
+ Price : 12.95
+----------PRODUCT INFORMATION--------------
+
+----OK
+
+
+*************ureg  joe smith joe@cs.umb.edu***************
+
+Registering user: joe smith joe@cs.umb.edu
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'joe', 'smith', 'joe@cs.umb.edu') 
+Register user complete, exiting...
+----OK
+
+
+*************ureg  sue cohen sue@cs.umb.edu***************
+
+Registering user: sue cohen sue@cs.umb.edu
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (2, 'sue', 'cohen', 'sue@cs.umb.edu') 
+Register user complete, exiting...
+----OK
+
+
+*************gui sue@cs.umb.edu***************
+
+java.sql.SQLException: Column 'firstname' not found.
+
+No such user: sue@cs.umb.edu
+
+----OK
+
+
+*************gti pf01***************
+
+
+-----------------TRACKS for pf01--------------
+
+	TrackNo	FileName	Title	Prod Code
+
+	6	corvair.mp3	64 Corvair, Part 2	 pf01
+---------------------------------------------------
+----OK
+
+
+*************dl joe@cs.umb.edu jr01 1***************
+
+java.sql.SQLException: Column 'firstname' not found.
+
+No such user
+
+----OK
+
+
+*************cc***************
+
+
+ cart created 
+----OK
+
+
+*************addli pf01***************
+
+
+ Added to Cart..
+----OK
+
+
+*************sc***************
+
+
+ Now displaying Cart...
+
+-----------------C A R T--------------
+
+	Prod Code	Qty
+
+	pf01	1
+---------------------------------------------------
+----OK
+
+
+*************co sue@cs.umb.edu***************
+
+java.sql.SQLException: Column 'firstname' not found.
+
+No such user
+
+----OK
+
+
+*************setproc 1***************
+
+Error in run of SystemTest: 
+cs636.music.service.ServiceException: Error in processInvoice
+  cause: java.lang.NullPointerExceptioncs636.music.service.ServiceException: Error in processInvoice
+	at cs636.music.service.UserService.processInvoice(UserService.java:197)
+	at cs636.music.presentation.SystemTest.run(SystemTest.java:191)
+	at cs636.music.presentation.SystemTest.main(SystemTest.java:67)
+Caused by: java.lang.NullPointerException
+	at cs636.music.service.UserService.processInvoice(UserService.java:194)
+	... 2 more
+
+-------Printing config class: diff from provided---
+-------Expect to see creation of UserService and AdminService here
+-------and DAOs. Note any different/additional service classes---
+-------If any, make sure they have appropriate treatment---
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/config/MusicSystemConfig.java src/main/java/cs636/music/config/MusicSystemConfig.java
+7a8,12
+> import cs636.music.dao.DownloadDAO;
+> import cs636.music.dao.InvoiceDAO;
+> import cs636.music.dao.LineItemDAO;
+> import cs636.music.dao.ProductDAO;
+> import cs636.music.dao.UserDAO;
+8a14
+> import cs636.music.service.UserService;
+21a28
+> 	private static UserService userService;
+25,31c32,37
+< //	private static UserService userService;
+< //	// the lower-level service objects-- you can vary this as desired
+< //	private static DownloadDAO downloadDao;
+< //	private static InvoiceDAO invoiceDao;
+< //	private static LineItemDAO lineItemDao;
+< //	private static ProductDAO productDao;
+< //	private static UserDAO userDao;
+---
+> 	// the lower-level service objects-- you can vary this as desired
+> 	private static DownloadDAO downloadDao;
+> 	private static InvoiceDAO invoiceDao;
+> 	private static LineItemDAO lineItemDao;
+> 	private static ProductDAO productDao;
+> 	private static UserDAO userDao;
+49,50d54
+< 			adminService = new AdminService(dbDAO, adminDao);
+< 			
+52,57c56,63
+< //			productDao = new ProductDAO(dbDAO);
+< //			userDao = new UserDAO(dbDAO);
+< //			downloadDao = new DownloadDAO(dbDAO, userDao);		
+< //			lineItemDao = new LineItemDAO(dbDAO, productDao);	
+< //			invoiceDao = new InvoiceDAO(dbDAO,lineItemDao);
+< //			userService = new UserService(productDao,userDao,downloadDao,lineItemDao,invoiceDao);
+---
+> 			productDao = new ProductDAO(dbDAO);
+> 			userDao = new UserDAO(dbDAO);
+> 			downloadDao = new DownloadDAO(dbDAO, userDao, productDao);		
+> 			lineItemDao = new LineItemDAO(dbDAO, productDao);
+> 			invoiceDao = new InvoiceDAO(dbDAO, lineItemDao, userDao, productDao);
+> 			userService = new UserService(dbDAO, userDao, productDao, downloadDao, lineItemDao, invoiceDao);
+> 			adminService = new AdminService(dbDAO, adminDao, productDao, downloadDao, lineItemDao, invoiceDao);
+> 
+96,99c102,105
+< //
+< //	public static UserService getUserService() {
+< //		return userService;
+< //	}
+---
+> 
+> 	public static UserService getUserService() {
+> 		return userService;
+> 	}
+-------Printing domain classes: diff from provided----
+-------Changes are OK, but might be disruptive--------
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/CartItem.java src/main/java/cs636/music/domain/CartItem.java
+4,12c4,10
+<  * CartItem: memory-only object for item in the cart
+<  * i.e, it is not a "persistent object" tied to database data
+<  * It is mutable, but also user private, so
+<  * it doesn't violate the principle of keeping
+<  * persistent domain objects out of the presentation layer.
+<  * Note that the product object, a persistent object is
+<  * only represented by its id, not the whole object.
+<  * Data is moved to a LineItem object in checkout
+<  * For API calls, see related POJO service.data/CartItemData.java
+---
+>  * CartItem: memory-only object for item in the cart i.e, it is not a
+>  * "persistent object" tied to database data It is mutable, but also user
+>  * private, so it doesn't violate the principle of keeping persistent domain
+>  * objects out of the presentation layer. Note that the product object, a
+>  * persistent object is only represented by its id, not the whole object. Data
+>  * is moved to a LineItem object in checkout For API calls, see related POJO
+>  * service.data/CartItemData.java
+18a17,18
+> 	private Invoice invoice;
+> 	private Product product;
+27a28,33
+> 	public CartItem (long productId, int quantity, Invoice invoice) {
+> 		this.productId = productId;
+> 		this.quantity = quantity;
+> 		this.invoice = invoice;
+> 	}
+> 	
+37a44,47
+> 	}
+> 
+> 	public Invoice getInvoice() {
+> 		return this.invoice;
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/Cart.java src/main/java/cs636/music/domain/Cart.java
+54a55,72
+> 	 * Find an item of this cart through its product id.
+> 	 * @param product the product id
+> 	 * @return the item in this cart with the given product id. 
+> 	 */
+> 	public CartItem findItem(Product product) {
+> 		// This could be done by product code rather than id
+> 		long prodId = product.getId(); 
+> 
+> 		for (CartItem l : items) {
+> 			if (l.getProductId() == prodId) {
+> 				return l;
+> 			}
+> 		}
+> 		return null;
+> 	}
+> 	
+> 
+> 	/**
+91a110,123
+> 	/**
+> 	 * Remove an item with given product id from this cart 
+> 	 * @param product the product need to be removed 
+> 	 */
+> 	public void removeItem(Product product) {
+> 		long prodId = product.getId(); 
+> 
+> 		for (CartItem l : items) {
+> 			if (l.getProductId() == prodId) {
+> 				items.remove(l);
+> 				return;
+> 			}
+> 		}
+> 	}
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/Download.java src/main/java/cs636/music/domain/Download.java
+6,7d5
+< import cs636.music.domain.User;
+< 
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/Invoice.java src/main/java/cs636/music/domain/Invoice.java
+33c33,34
+< 	public Invoice(long id, User u, Date d, boolean isProc, Set<LineItem> items, BigDecimal totAmount) {
+---
+> 	public Invoice(long id, User u, Date d, boolean isProc, 
+> 					Set<LineItem> items, BigDecimal totAmount) {
+90a92,95
+> 
+> 	public void setCartItems(Set<LineItem> items) {
+> 		lineItems = items;
+> 	}
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/LineItem.java src/main/java/cs636/music/domain/LineItem.java
+3,4d2
+< import java.math.BigDecimal;
+< 
+16a15
+> 	private Invoice invoice;
+23a23
+> 		this.invoice = invoice;
+30a31
+> 		this.invoice = invoice;
+56,66d56
+< 	}
+< 	
+< 	// Note this is method returning a quantity that is not a database column
+< 	// value from the lineitem table. To avoid problems later, we avoid "getXXX" 
+< 	// naming for such methods.
+< 	// Also, the name points out this is not just a value from the table.
+< 
+< 	public BigDecimal calculateItemTotal() {
+< 		// We can't use * to multiply with BigDecimal, but it knows how--
+< 		BigDecimal total = product.getPrice().multiply(new BigDecimal(quantity));
+< 		return total;
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/Product.java src/main/java/cs636/music/domain/Product.java
+32a33,51
+> 	public Product() {
+> 	}
+> 
+> 	public void setId(long id) {
+> 		this.id = id;
+> 	}
+> 
+> 	public void setCode(String code) {
+> 		this.code = code;
+> 	}
+> 
+> 	public void setDescription(String description) {
+> 		this.description = description;
+> 	}
+> 
+> 	public void setPrice(BigDecimal price) {
+> 		this.price = price;
+> 	}
+> 
+39,42d57
+< 	}
+< 
+< 	public Product() {
+< 
+diff -rb /data/htdocs/cs636/music1-setup/src/main/java/cs636/music/domain/User.java src/main/java/cs636/music/domain/User.java
+13a14,21
+> 	public User(String firstname, String lastname, String emailAddress) {
+> 		this.firstname = firstname;
+> 		this.lastname = lastname;
+> 		this.emailAddress = emailAddress;
+> 	}
+> 	public User() {
+> 	}
+> 	
+-------API for service classes--------------------------------------
+-------This should be complete, even if not all implemented---------
+AdminService.java:public class AdminService {
+AdminService.java:	public AdminService(DbDAO dbDao, AdminDAO adminDao, ProductDAO productDAO, DownloadDAO downloadDAO, 
+AdminService.java:	public void initializeDB() throws ServiceException {
+AdminService.java:	public void processInvoice(long invoiceId) throws ServiceException {
+AdminService.java:	public Set<InvoiceData> getListofInvoices() throws ServiceException {
+AdminService.java:	public Set<InvoiceData> getListofUnprocessedInvoices() throws ServiceException {
+AdminService.java:	public Set<DownloadData> getListofDownloads() throws ServiceException {
+AdminService.java:	public Boolean checkLogin(String username,String password) throws ServiceException {
+ServiceException.java:public class ServiceException extends Exception {
+ServiceException.java:	public ServiceException() {
+ServiceException.java:	public ServiceException(String arg0) {
+ServiceException.java:    public ServiceException(String reason, Throwable cause){
+UserService.java:public class UserService {
+UserService.java:	public UserService(DbDAO dbDao, UserDAO UserDao, ProductDAO productDao, DownloadDAO downloadDAO, 
+UserService.java:	public void initializeDB()throws ServiceException {
+UserService.java:	public void registerUser(String first, String last, String email) throws ServiceException {
+UserService.java:	public Set<Product> findAllProducts() throws ServiceException {
+UserService.java:	public UserData findUserByEmail(String email) throws ServiceException {
+UserService.java:	public Product findProductByCode(String productCode) throws ServiceException {
+UserService.java:	public void download(String userEmail, Track track) throws ServiceException {
+UserService.java:	public Cart newCart() {
+UserService.java:	public Set<CartItemData> cartInfo(Cart cart) throws ServiceException {
+UserService.java:	public InvoiceData checkOut(Cart cart, UserData userData) throws ServiceException{
+UserService.java:	public void addToCart(Product product, Cart cart) throws ServiceException {
+UserService.java:	public void processInvoice(long invoiceId) throws ServiceException {
+UserService.java:	public Set<InvoiceData> listInvoices() throws ServiceException {
+UserService.java:	public Set<DownloadData> listDownloads() throws ServiceException {
+UserService.java:	public User findUserById(long id) throws ServiceException{
+-------API for new DAO classes-------------------------
+-------should not see static here----------------------
+-------code itself may come from Murach's project------
+-------expect Admin, Product, Track, and User DAOs-----
+-------Track handling may be inside Product.java-------
+AdminDAO.java:public class AdminDAO {
+AdminDAO.java:	public AdminDAO (DbDAO db) {
+AdminDAO.java:	public Boolean findAdminUser(String uid, String pwd) throws SQLException {
+DbDAO.java:public class DbDAO {
+DbDAO.java:	public DbDAO(String dbUrl, String usr, String passwd) throws SQLException {
+DbDAO.java:	public void close() throws SQLException {
+DbDAO.java:	public void initializeDb() throws SQLException {
+ProductDAO.java:public class ProductDAO {
+ProductDAO.java:	public ProductDAO (DbDAO db) {
+ProductDAO.java:    public Product findProductByCode(String product_code) throws SQLException {
+ProductDAO.java:    public Product findProductByPID(long product_id) throws SQLException {
+ProductDAO.java:	public Set<Product> findAllProducts() throws SQLException {
+ProductDAO.java:	public Set<Track> findAllTracks(Product p) throws SQLException {
+ProductDAO.java:	public Track findTrackByTID(long trackId) throws SQLException {
+UserDAO.java:public class UserDAO {
+UserDAO.java:	public UserDAO (DbDAO db) {
+UserDAO.java:	public User findUserByEmail(String email) throws SQLException {
+UserDAO.java:    public void insertUser(User user) throws SQLException
+UserDAO.java:	public User findUserByID (long user_id) throws SQLException {
+-------Directory of service package-----------------------------
+-------See xxxService.java (if not, will not be output here)----
+AdminService.java
+data
+ServiceException.java
+UserService.java
+-------Printing service classes (*Service.java)----
+package cs636.music.service;
+
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+
+import cs636.music.dao.AdminDAO;
+import cs636.music.dao.DbDAO;
+import cs636.music.dao.DownloadDAO;
+import cs636.music.dao.InvoiceDAO;
+import cs636.music.dao.LineItemDAO;
+import cs636.music.dao.ProductDAO;
+import cs636.music.service.data.DownloadData;
+import cs636.music.service.data.InvoiceData;
+
+/**
+ * 
+ * Provide admin level services to user app through accessing DAOs 
+ * @author Chung-Hsien (Jacky) Yu
+ */
+public class AdminService {
+	
+	private DbDAO db;
+	private AdminDAO adminDb;
+	private DownloadDAO dldb;
+	private InvoiceDAO invoicedb;
+	private ProductDAO proddb;
+	private LineItemDAO lineitemdb;
+	/**
+	 * construct a admin service provider 
+	 * @param dbDao
+	 */
+	public AdminService(DbDAO dbDao, AdminDAO adminDao, ProductDAO productDAO, DownloadDAO downloadDAO, 
+						LineItemDAO lineItemDAO, InvoiceDAO invoiceDAO) {
+		db = dbDao;	
+		adminDb = adminDao;
+		dldb = downloadDAO;
+		invoicedb = invoiceDAO;
+		proddb = productDAO;
+		lineitemdb = lineItemDAO;
+	}
+	
+	/**
+	 * Clean all user table, not product and system table to empty
+	 * and then set the index numbers back to 1
+	 * @throws ServiceException
+	 */
+	public void initializeDB() throws ServiceException {
+		try {
+			db.initializeDb();
+		} catch (SQLException e)
+		{
+			throw new ServiceException("Can't initialize DB: ", e);
+		}	
+	}
+	
+	/**
+	 * process the invoice
+	 * @param invoiceId
+	 * @throws ServiceException
+	 */
+	public void processInvoice(long invoiceId) throws ServiceException {
+		System.out.println("TEMP: processing invoice");
+	}
+
+	/**
+	 * Get a list of all invoices
+	 * @return list of all invoices in InvoiceData objects
+	 * @throws ServiceException
+	 */
+	public Set<InvoiceData> getListofInvoices() throws ServiceException {
+		System.out.println("TEMP: getting invoices");
+		return new HashSet<InvoiceData>();
+	}
+	
+	/**
+	 * Get a list of all unprocessed invoices
+	 * @return list of all unprocessed invoices in InvoiceData objects
+	 * @throws ServiceException
+	 */
+	public Set<InvoiceData> getListofUnprocessedInvoices() throws ServiceException {
+		System.out.println("TEMP: getting unprocessed invoices");
+		return new HashSet<InvoiceData>();
+	}
+	
+	/**
+	 * Get a list of all downloads
+	 * @return list of all downloads
+	 * @throws ServiceException
+	 */
+	public Set<DownloadData> getListofDownloads() throws ServiceException {
+		System.out.println("TEMP: getting downloads");
+		return new HashSet<DownloadData>();
+	}
+	
+	
+	/**
+	 * Check login user
+	 * @param username
+	 * @param password
+	 * @return true if useranme and password exist, otherwise return false
+	 * @throws ServiceException
+	 */
+	public Boolean checkLogin(String username,String password) throws ServiceException {
+		try {
+			return adminDb.findAdminUser(username, password);
+		} catch (SQLException e)
+		{
+			throw new ServiceException("Check login error: ", e);
+		}
+	}
+	
+}
+package cs636.music.service;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import cs636.music.dao.UserDAO;
+import cs636.music.dao.DbDAO;
+import cs636.music.dao.DownloadDAO;
+import cs636.music.dao.InvoiceDAO;
+import cs636.music.dao.LineItemDAO;
+import cs636.music.dao.ProductDAO;
+import cs636.music.service.data.CartItemData;
+import cs636.music.service.data.DownloadData;
+import cs636.music.service.data.InvoiceData;
+import cs636.music.service.data.UserData;
+import cs636.music.domain.Cart;
+import cs636.music.domain.CartItem;
+import cs636.music.domain.Download;
+import cs636.music.domain.Invoice;
+import cs636.music.domain.LineItem;
+import cs636.music.domain.Product;
+import cs636.music.domain.Track;
+import cs636.music.domain.User;
+
+
+/**
+ * 
+ * Provide admin level services to user app through accessing DAOs 
+ * @author Chung-Hsien (Jacky) Yu
+ */
+public class UserService {
+	
+	private DbDAO db;
+	private UserDAO userdb;
+	private ProductDAO proddb;
+	private DownloadDAO dldb;
+	private InvoiceDAO invoicedb;
+	private LineItemDAO lineItemdb;
+	/**
+	 * construct a admin service provider 
+	 * @param dbDao
+	 */
+	public UserService(DbDAO dbDao, UserDAO UserDao, ProductDAO productDao, DownloadDAO downloadDAO, 
+						LineItemDAO lineItemDao, InvoiceDAO invoiceDAO) {
+		db = dbDao;	
+		userdb = UserDao;
+		proddb = productDao;
+		dldb = downloadDAO;
+		lineItemdb = lineItemDao;
+		invoicedb = invoiceDAO;
+	}
+	
+	/**
+	 * Clean all user table, not product and system table to empty
+	 * and then set the index numbers back to 1
+	 * @throws ServiceException
+	 */
+	public void initializeDB()throws ServiceException {
+		try {
+			db.initializeDb();
+		} catch (SQLException e)
+		{
+			throw new ServiceException("Can't initialize DB: ", e);
+		}	
+	}
+
+	public void registerUser(String first, String last, String email) throws ServiceException {
+		try {
+			User user = new User(first, last, email); //cs636.music.domain.User;
+			userdb.insertUser(user);
+		} catch (Exception e) {
+			throw new ServiceException("Error in registerUser", e);
+		}
+	}
+
+	public Set<Product> findAllProducts() throws ServiceException {
+		Set<Product> prodList = null;
+		try {
+			prodList = proddb.findAllProducts();
+		} catch (Exception e) {
+			throw new ServiceException("Error in findAllProducts", e);
+		}
+		return prodList;
+	}
+
+	public UserData findUserByEmail(String email) throws ServiceException {
+		User user = null;
+		try {
+			user = userdb.findUserByEmail(email);
+		} catch (Exception e) {
+			throw new ServiceException("Error in findUserByEmail", e);
+		}
+		if (user != null)
+			return new UserData(user);
+		else
+			return null;
+	}
+
+	public Product findProductByCode(String productCode) throws ServiceException {
+		Product p = null;
+		try {
+			p = proddb.findProductByCode(productCode);
+		} catch (Exception e) {
+			throw new ServiceException("Error in findProductByCode", e);
+		}
+		return p;
+	}
+
+	public void download(String userEmail, Track track) throws ServiceException {
+		try {
+			Download d = new Download();
+			User user = userdb.findUserByEmail(userEmail);
+			d.setUser(user);
+			d.setDownloadDate(new Date());
+			d.setTrack(track);
+			dldb.insertDownload(d);
+		} catch (Exception e) {
+			throw new ServiceException("Error in download", e);
+		}
+	}
+
+	public Cart newCart() {
+		return new Cart();
+	}
+
+	public Set<CartItemData> cartInfo(Cart cart) throws ServiceException {
+		Set<CartItemData> items = new HashSet<CartItemData>();
+		try {
+			for (CartItem item : cart.getItems()) {
+				Product p = proddb.findProductByPID(item.getProductId());
+				CartItemData itemData = 
+				new CartItemData(item.getProductId(), item.getQuantity(), 
+				p.getCode(), p.getDescription(), p.getPrice());
+
+				items.add(itemData);
+			}
+
+		} catch (Exception e) {
+			throw new ServiceException("No product in cart", e);
+		}
+		return items;
+	}
+
+	public InvoiceData checkOut(Cart cart, UserData userData) throws ServiceException{
+		Invoice invoice = null;
+		BigDecimal total = new BigDecimal(0);
+		BigDecimal price = new BigDecimal(0);
+		BigDecimal quantity = new BigDecimal(0);
+		try {
+			invoice = new Invoice();
+			new Invoice(1, null, new Date(), false, null, null);
+			Set<LineItem> items = new HashSet<LineItem>();
+			
+			for (CartItem CartItem : cart.getItems())
+			{
+				Product p = proddb.findProductByPID(CartItem.getProductId());
+				LineItem item = new LineItem(p, invoice, CartItem.getQuantity());
+				items.add(item);
+				price = p.getPrice();
+				quantity = new BigDecimal(item.getQuantity());
+				total = total.add(price.multiply(quantity));	
+			}
+			invoice.setTotalAmount(total);
+			invoice.setLineItems(items);
+			User user = userdb.findUserByID(userData.getId());
+			if (user != null) {
+				invoice.setUser(user);
+				invoicedb.insertInvoice(invoice);
+				cart.clear();
+			}
+		} catch (Exception e) {
+			throw new ServiceException("Error in checkOut", e);
+		}
+		return new InvoiceData(invoice);
+	}
+
+	public void addToCart(Product product, Cart cart) throws ServiceException {
+		CartItem item = cart.findItem(product);
+		if (item != null) { // in cart, add extra
+			item.setQuantity(item.getQuantity() + 1);
+		}
+		else { // new item into cart
+			item = new CartItem(product.getId(), 1);
+			cart.addItem(item);
+		}
+	}
+
+	public void processInvoice(long invoiceId) throws ServiceException {
+		try {
+			Invoice invoice = invoicedb.findInvoice(invoiceId);
+			invoice.setProcessed(true);
+			invoicedb.updateInvoice(invoice);
+		} catch (Exception e) {
+			throw new ServiceException("Error in processInvoice", e);
+		}
+	}
+
+	public Set<InvoiceData> listInvoices() throws ServiceException {
+		Set<Invoice> invoices = null;
+		try {
+			invoices = invoicedb.findAllInvoices();
+		} catch (Exception e) {
+			throw new ServiceException("Error in listInvoices", e);
+		}
+		// embedded invoices -> Data Object
+		Set<InvoiceData> invoiceDatas = new HashSet<InvoiceData>();
+		for (Invoice invoice : invoices) {
+			invoiceDatas.add(new InvoiceData(invoice));
+		}
+		return invoiceDatas;
+	}
+
+	public Set<DownloadData> listDownloads() throws ServiceException {
+		Set<Download> downloads = null;
+		try {
+			downloads = dldb.findAllDownloads();
+		} catch (Exception e) {
+			throw new ServiceException("Error in listDownloads", e);
+		}
+		// embedded downloads -> Data Object
+		Set<DownloadData> downloadDatas = new HashSet<DownloadData>();
+		for (Download dl : downloads) {
+			downloadDatas.add(new DownloadData(dl));
+		}
+		return downloadDatas;
+	}
+
+	public User findUserById(long id) throws ServiceException{
+		User user = null;
+		try {
+			user = userdb.findUserByID(id);
+		} catch (Exception e) {
+			throw new ServiceException("Error in findUserById", e);
+		}
+		return user;
+	}
+
+	
+
+}-------Printing two DAO classes---------
+
+package cs636.music.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
+
+import cs636.music.domain.Product;
+import cs636.music.domain.Track;
+
+import static cs636.music.dao.DBConstants.*;
+
+/*
+CREATE TABLE product(
+    product_id INT NOT NULL,
+    product_code VARCHAR(10) NOT NULL,
+    product_description VARCHAR(100) NOT NULL,
+    product_price DECIMAL(10,2) NOT NULL,  
+    UNIQUE (product_code),   
+    PRIMARY KEY (product_id)
+);
+*/
+
+public class ProductDAO {
+
+	private Connection connection;
+
+	public ProductDAO (DbDAO db) {
+		connection = db.getConnection();
+	}
+    
+    // page 667 Murach JSP
+    public Product findProductByCode(String product_code) throws SQLException {
+        Statement stmt = connection.createStatement();
+        Set<Track> trackSet = new HashSet<Track>();
+        Product p = null;
+        Track t = null;
+        // implement track as well.
+        String sqlString = "select * from "+ 
+                            PRODUCT_TABLE+" p, "+ 
+                            TRACK_TABLE+" t "+
+                            " where p.product_code = '"+product_code+"'"+ 
+                            " and p.product_id = t.product_id";
+        try {
+            ResultSet rs = stmt.executeQuery(sqlString);
+            if (rs.next()){ // if the result is not empty
+                p = new Product();
+                p.setId(rs.getLong("product_id"));
+                p.setCode(rs.getString("product_code"));
+                p.setDescription(rs.getString("product_description"));
+                p.setPrice(rs.getBigDecimal("product_price"));
+                // tracks
+                t = new Track();
+                t.setId(rs.getLong("track_id"));
+                t.setProduct(p);
+                t.setTrackNumber(rs.getInt("track_number"));
+                t.setTitle(rs.getString("title"));
+                t.setSampleFilename(rs.getString("sample_filename"));
+                trackSet.add(t);
+                // has more?
+                while (rs.next()) {
+                    t.setId(rs.getLong("track_id"));
+                    t.setProduct(p);
+                    t.setTrackNumber(rs.getInt("track_number"));
+                    t.setTitle(rs.getString("title"));
+                    t.setSampleFilename(rs.getString("sample_filename"));
+                    trackSet.add(t);
+                }
+                p.setTracks(trackSet);
+                rs.close();
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+            return null;
+        } finally {
+            stmt.close();
+        }
+        return p;
+    }
+    
+    public Product findProductByPID(long product_id) throws SQLException {
+        Statement stmt = connection.createStatement();
+        Set<Track> trackSet = new HashSet<Track>();
+        Product p = null;
+        Track t = null;
+        String sqlString = "select * from "+
+                            PRODUCT_TABLE+" p, "+
+                            TRACK_TABLE+" t "+
+                            " where p.product_id = "+product_id+
+                            " and p.product_id = t.product_id";
+        try {
+            ResultSet rs = stmt.executeQuery(sqlString);
+            if (rs.next()){ // if the result is not empty
+                p = new Product();
+                p.setId(rs.getLong("product_id"));
+                p.setCode(rs.getString("product_code"));
+                p.setDescription(rs.getString("product_description"));
+                p.setPrice(rs.getBigDecimal("product_price"));
+                // tracks
+                t = new Track();
+                t.setId(rs.getLong("track_id"));
+                t.setProduct(p);
+                t.setTrackNumber(rs.getInt("track_number"));
+                t.setTitle(rs.getString("title"));
+                t.setSampleFilename(rs.getString("sample_filename"));
+                trackSet.add(t);
+                // has more?
+                while (rs.next()) {
+                    t.setId(rs.getLong("track_id"));
+                    t.setProduct(p);
+                    t.setTrackNumber(rs.getInt("track_number"));
+                    t.setTitle(rs.getString("title"));
+                    t.setSampleFilename(rs.getString("sample_filename"));
+                    trackSet.add(t);
+                }
+                p.setTracks(trackSet);
+                rs.close();
+            }
+        } catch (SQLException e) {
+            System.err.println(e);
+            return null;
+        } finally {
+            stmt.close();
+        }
+        return p;
+    }
+
+    /**
+	 * find all products by given a product id
+     * referenced from DownloadDAO.java
+	 * @return all products in a Set
+	 * @throws SQLException
+	 */
+	public Set<Product> findAllProducts() throws SQLException {
+		Set<Product> productSet = new HashSet<Product>();
+		Statement stmt = connection.createStatement();
+		String sqlString = "select * from " + PRODUCT_TABLE;
+		try {
+			ResultSet rs = stmt.executeQuery(sqlString);
+			while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getLong("product_id"));
+                p.setCode(rs.getString("product_code"));
+                p.setDescription(rs.getString("product_description"));
+                p.setPrice(rs.getBigDecimal("product_price"));
+				productSet.add(p);
+            }
+            rs.close();
+		} catch (Exception e) {
+            System.err.println(e);
+            return null;
+        } finally {
+			stmt.close();
+        }
+        return productSet;
+    }
+    
+    /**
+	 * find all tracks given product
+	 * @return all tracks in a Set
+	 * @throws SQLException
+	 */
+	public Set<Track> findAllTracks(Product p) throws SQLException {
+        return p.getTracks();
+    }
+
+    /**
+	 * find track by track_id
+	 * @param trackId given track_id
+	 * @return the track with given param trackId
+	 * @throws SQLException
+	 */
+	public Track findTrackByTID(long trackId) throws SQLException {
+        Statement stmt = connection.createStatement();
+        Track t = null;
+        String sqlString =  " select * from " + 
+			                PRODUCT_TABLE+" p, " +
+			                TRACK_TABLE+" t "+		
+			                " where t.track_id = "+trackId+ 
+                            " and t.product_id = p.product_id";
+		try 
+		{
+			ResultSet rs = stmt.executeQuery(sqlString);
+			if (rs.next()){ // if the result is not empty
+				Product p = findProductByPID(rs.getInt("product_id"));
+				if (p != null) {
+					t = p.findTrackbyID((int)trackId);
+                }
+                rs.close();
+            }
+		} catch (Exception e) {
+            System.err.println(e);
+            return null;
+        } finally {
+			stmt.close();
+        }
+        return t;
+    }
+    
+}
+package cs636.music.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import cs636.music.dao.DbDAO;
+import cs636.music.domain.User;
+
+import static cs636.music.dao.DBConstants.*;
+
+/**
+ * 
+ * Access admin related tables through this class.
+ * @author 
+ */
+public class UserDAO {
+
+	private Connection connection;
+
+	public UserDAO (DbDAO db) {
+		connection = db.getConnection();
+	}
+
+	/**
+	 * find user if it already exist
+	 * 
+	 * @param email
+	 * @return
+	 * @throws SQLException
+	 */
+	public User findUserByEmail(String email) throws SQLException {
+		Statement stmt = connection.createStatement();
+		User user = null;
+		try {
+			ResultSet set = stmt.executeQuery("select user_id from " + USER_TABLE + " where email_address = " + "'"+email+"'");
+			if (set.next()){ // if the result is not empty
+				user = new User();
+				user.setId(set.getLong("user_id"));
+				user.setFirstname(set.getString("firstname"));
+				user.setLastname(set.getString("lastname"));
+				user.setEmailAddress(set.getString("email_address"));
+				set.close();
+			}
+		} catch (SQLException e) {
+			System.err.println(e);
+            	return null;
+		} finally {
+			stmt.close();
+		}
+		return user;
+	}
+
+    public void insertUser(User user) throws SQLException
+    {
+		//System.out.println("insertUser called, email = "+email);
+		Statement stmt = connection.createStatement();
+		try {
+			String email = user.getEmailAddress();
+			String first = user.getFirstname();
+			String last = user.getLastname();
+			if (findUserByEmail(email) != null)
+			{
+				System.out.println("User with email: '" + email + "' already exist!");
+			}
+			else
+			{
+				long userID = getNextUserID();
+				String sqlString = "insert into " + USER_TABLE + 
+				" (user_id, firstname, lastname, email_address) values ("
+				+ userID + ", " + "'"+first+"'" + ", "
+				+ "'" +last+ "'" + ", " + "'" +email+ "'" + ") ";
+				stmt.execute(sqlString);
+				System.out.println("SQL code: " + sqlString);
+				System.out.println("Register user complete, exiting...");
+			}
+		} finally {
+			stmt.close();
+		}
+	}
+
+/**
+	 * Get the available user id 
+	 * @return the line item id available 
+	 * @throws SQLException
+	 */
+	private long getNextUserID() throws SQLException
+	{
+		int nextLID;
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet set = stmt.executeQuery(" select user_id from " + SYS_TABLE);
+			set.next();
+			nextLID = set.getInt("user_id");
+		} finally {
+			stmt.close();
+		}
+		advanceUserID(); // the id has been taken, so set +1 for next one
+		return nextLID;
+	}
+
+	/**
+	 * Increase user_id by 1 in the system table
+	 * @throws SQLException
+	 */
+	private void advanceUserID() throws SQLException
+	{
+		Statement stmt = connection.createStatement();
+		try {
+			stmt.executeUpdate(" update " + SYS_TABLE + " set user_id = user_id + 1");
+		} finally {
+			stmt.close();
+		}
+	}
+
+	public User findUserByID (long user_id) throws SQLException {
+		Statement stmt = connection.createStatement();
+		User user = null;
+		try {
+			String sqlString = "select * from " + 
+								USER_TABLE + 
+								" where user_id = " + user_id;
+
+			ResultSet set = stmt.executeQuery(sqlString);
+			if (set.next()){ // if the result is not empty
+				user = new User();
+				user.setId(set.getInt("user_id"));
+				user.setFirstname(set.getString("firstname"));
+				user.setLastname(set.getString("lastname"));
+				user.setEmailAddress(set.getString("email_address"));
+				set.close();
+			}
+			else {
+				System.out.println("User not found.");
+				return null;
+			}
+		} finally {
+			stmt.close();
+		}
+		return user;
+	}
+}-------Presentation classes-----------------------------
+-------Printing SystemTest.java-------------------------
+
+package cs636.music.presentation;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Set;
+
+import cs636.music.config.MusicSystemConfig;
+import cs636.music.domain.Cart;
+import cs636.music.domain.Product;
+import cs636.music.domain.Track;
+import cs636.music.service.AdminService;
+import cs636.music.service.data.CartItemData;
+import cs636.music.service.UserService;
+import cs636.music.service.data.DownloadData;
+import cs636.music.service.data.InvoiceData;
+import cs636.music.service.data.UserData;
+
+
+/**
+ * 
+ *         This class tests the system.
+ */
+public class SystemTest {
+	private AdminService adminService;
+	private UserService userService;
+	private String inFile;
+	private Cart cart;
+
+	public SystemTest(String inFile, String dbUrl, String usr, String passwd)
+			throws Exception {
+		this.inFile = inFile;
+		System.out
+		.println("running SystemTest, calling config with: "+dbUrl+" "+usr+" "+passwd);	
+		MusicSystemConfig.configureServices(dbUrl, usr, passwd);
+		adminService = MusicSystemConfig.getAdminService();
+		userService = MusicSystemConfig.getUserService();
+	}
+
+	public static void main(String[] args) {
+		String inFile = null;
+		String dbUrl = null;
+		String usr = null;
+		String pw = null;
+		if (args.length == 0) {  // no args: run on H2 with test.dat
+			inFile = "test.dat";
+			// leave dbUrl null, for H2
+		} else if (args.length == 3) {
+			inFile = "test.dat";
+			dbUrl = args[0];
+			usr = args[1];
+			pw = args[2];
+		} else if (args.length == 4) {
+			inFile = args[0];
+			dbUrl = args[1];
+			usr = args[2];
+			pw = args[3];	
+		} else {
+			System.out
+					.println("usage:java [<inputFile>] <dbURL> <user> <passwd> ");
+			return;
+		}
+		try {
+			SystemTest test = new SystemTest(inFile, dbUrl, usr, pw);
+			test.run();
+			MusicSystemConfig.shutdownServices();
+			System.out.println("Run complete, exiting");
+		} catch (Exception e) {
+			System.out.println("Error in run of SystemTest: " );
+			System.out.println(MusicSystemConfig.exceptionReport(e));
+		}
+	}
+	
+	public void run() throws Exception {
+		String command = null;
+		Scanner in = new Scanner(new File(inFile));
+		while ((command = getNextCommand(in)) != null) {
+			System.out.println("\n\n*************" + command
+					+ "***************\n");
+			if (command.equalsIgnoreCase("i")) { // admin init db
+				System.out.println("Initializing system");
+				userService.initializeDB();
+				adminService.initializeDB();
+			} else if (command.equalsIgnoreCase("gp")) // get list of CDs
+			{
+				Set<Product> cdList = userService.findAllProducts(); // TODO call service layer
+				if (cdList != null)
+					PresentationUtils.displayCDCatlog(cdList, System.out);
+
+			} else if (command.startsWith("gui")) { // get info on user
+				String usr = getTokens(command)[1];
+				UserData user = userService.findUserByEmail(usr); // TODO call service layer
+				if (user == null)
+					System.out.println("\nNo such user: " + usr +"\n");
+				else
+					PresentationUtils.displayUserInfo(user, System.out);
+			} else if (command.startsWith("gpi")) { // get info for product
+				String productCode = getTokens(command)[1];
+				Product product = userService.findProductByCode(productCode); // TODO call service layer
+				if (product == null)
+					System.out.println("\nNo such product\n");
+				else
+					PresentationUtils.displayProductInfo(product, System.out);
+			} else if (command.startsWith("ureg")) { // ureg fname lname email
+				String userInfo[] = getTokens(command); // whitespace delim.
+														// tokens
+				System.out.println("Registering user: " + 
+						userInfo[1] + " " + userInfo[2] + " " + userInfo[3]);
+				userService.registerUser(userInfo[1], userInfo[2], userInfo[3]);
+			} else if (command.startsWith("gti")) {
+				// gti prodcode:  list track info for CD
+				String productCode = getTokens(command)[1];
+				Product product = userService.findProductByCode(productCode); // TODO call service layer
+				if (product == null)
+					System.out.println("\nNo such product\n");
+				else
+					PresentationUtils.displayTracks(product, System.out);
+
+			} else if (command.startsWith("dl")) {
+				// record download by user x of product y (some track)
+				String params[] = getTokens(command);
+				String userEmail = params[1];
+				String productCode = params[2];
+				int trackNum = Integer.parseInt(params[3]);
+				Product product = userService.findProductByCode(productCode); // TODO call service layer
+				if (product == null)
+					System.out.println("\nNo such product\n");
+				else {
+					Set<Track> tracks = product.getTracks();
+					Track track0 = null;
+					UserData user = userService.findUserByEmail(userEmail); // TODO call service layer
+					if (user == null)
+						System.out.println("\nNo such user\n");
+					else  // TODO call service layer
+					{
+						for (Track t : tracks) {
+							if (t.getTrackNumber() == trackNum) {
+								track0 = t;
+							}
+						}
+						if (track0 != null) {
+							System.out.println("Recording download for user");
+							userService.download(userEmail, track0);
+						}
+						else {
+							System.out.println("No such trackNumber: " + trackNum);
+						}
+					}
+				}
+			} else if (command.startsWith("cc")) { // create cart
+				cart = userService.newCart(); // TODO call service layer
+				System.out.println("\n cart created ");
+
+			} else if (command.startsWith("sc")) { // show cart
+				System.out.println("\n Now displaying Cart...");
+				Set<CartItemData> items = userService.cartInfo(cart); // TODO call service layer
+				PresentationUtils.displayCart(items, System.out);
+
+			} else if (command.startsWith("co")) { // checkout userid
+				String params[] = getTokens(command);
+				String email = params[1];
+				UserData user = userService.findUserByEmail(email); // TODO call service layer
+				if (user == null)
+					System.out.println("\nNo such user\n");
+				else {
+					// TODO call service layer
+					user = userService.findUserByEmail(email);
+					InvoiceData invoiceData = userService.checkOut(cart, user);
+					System.out.println("\n CDs Ordered..");
+					PresentationUtils.displayInvoice(invoiceData, System.out);
+				}
+
+			} else if (command.startsWith("addli")) { // add to cart
+
+				String params[] = getTokens(command);
+				String productCode = params[1];
+				Product product = userService.findProductByCode(productCode); // TODO call service layer
+				if (product == null)
+					System.out.println("\nNo such product\n");
+				else {
+					// TODO call service layer
+					userService.addToCart(product, cart);
+					System.out.println("\n Added to Cart..");
+				}
+			} else if (command.startsWith("setproc")) // process invoice
+			{
+				int params[] = getIntTokens(command);
+				// TODO call service layer
+				userService.processInvoice(params[1]);
+			} else if (command.equalsIgnoreCase("gi")) // get list of invoices
+			{
+				Set<InvoiceData> inv = userService.listInvoices(); // TODO call service layer
+				PresentationUtils.displayInvoices(inv, System.out);
+			} else if (command.startsWith("gd")) // get list of downloads
+			{
+				Set<DownloadData> dList = userService.listDownloads(); // TODO call service layer
+				PresentationUtils.downloadReport(dList, System.out);
+			} else
+				System.out.println("Invalid Command: " + command);
+			System.out.println("----OK");
+		}
+		in.close();
+	}
+
+	// Return line or null if at end of file
+	public String getNextCommand(Scanner in) throws IOException {
+		String line = null;
+		try {
+			line = in.nextLine();
+		} catch (NoSuchElementException e) { } // leave line null
+		return (line != null) ? line.trim() : line;
+	}
+		
+	// use powerful but somewhat mysterious split method of String
+	private String[] getTokens(String command) {
+		return command.split("\\s+"); // white space
+	}
+
+	private int[] getIntTokens(String command) {
+		String tokens[] = getTokens(command);
+		int returnValue[] = new int[tokens.length];
+		for (int i = 1; i < tokens.length; i++)
+			// skipping 0th, not an int
+			returnValue[i] = Integer.parseInt(tokens[i]);
+		return returnValue;
+	}
+
+}
+-------Printing UserApp.java: diff from provided---------
+4a5
+> import java.util.Set;
+6a8,16
+> import cs636.music.domain.Cart;
+> import cs636.music.domain.Product;
+> import cs636.music.domain.Track;
+> import cs636.music.domain.User;
+> import cs636.music.service.ServiceException;
+> import cs636.music.service.UserService;
+> import cs636.music.service.data.CartItemData;
+> import cs636.music.service.data.InvoiceData;
+> import cs636.music.service.data.UserData;
+21,30c31,39
+< 	 * Since the page flow in this app is tree-like, plus back arrows to the
+< 	 * topmost Catalog page, we can implement it easily with methods so that
+< 	 * execution calls down the page tree and returns back to the top level. In
+< 	 * a more general page flow, we would need to have one top-level command
+< 	 * loop dispatching to various commands each of which returns with a value
+< 	 * that specifies which command to do next, and possibly arguments for it.
+< 	 * (Actually, this page flow is not quite a tree, because you can reach the
+< 	 * Cart page from several other pages, but since you always go back to the
+< 	 * Catalog page after that, we can still just return from wherever after
+< 	 * calling the Cart page method.)l
+---
+> 	 * Since the page flow in this app is tree-like, plus back arrows to the topmost
+> 	 * Catalog page, we can implement it easily with methods so that execution calls
+> 	 * down the page tree and returns back to the top level. In a more general page
+> 	 * flow, we would need to have one top-level command loop dispatching to various
+> 	 * commands each of which returns with a value that specifies which command to
+> 	 * do next, and possibly arguments for it. (Actually, this page flow is not
+> 	 * quite a tree, because you can reach the Cart page from several other pages,
+> 	 * but since you always go back to the Catalog page after that, we can still
+> 	 * just return from wherever after calling the Cart page method.)l
+34c43
+< 	// private UserService userService;
+---
+> 	private UserService userService;
+38,39c47,48
+< 	// private UserData user = null; // the user once registered
+< 	// private Cart cart = null; // the shopping cart for the user
+---
+> 	private UserData user = null; // the user once registered
+> 	private Cart cart = null; // the shopping cart for the user
+42c51,52
+< 	// service calls, but note that Products and their Tracks never change in this app.
+---
+> 	// service calls, but note that Products and their Tracks never change in this
+> 	// app.
+49c59
+< 		// userService = MusicSystemConfig.getUserService();
+---
+> 		userService = MusicSystemConfig.getUserService();
+71c81
+< 	public void handleCatalogPage() throws IOException {
+---
+> 	public void handleCatalogPage() throws IOException, ServiceException {
+76,81c86,90
+< 			System.out
+< 					.println("Calling service layer for list of CDs (Product POJOs)");
+< 			System.out
+< 					.println("Displaying list of CDs: product codes and descriptions");
+< 			String productId = PresentationUtils
+< 					.readEntry(in,
+---
+> 			System.out.println("Calling service layer for list of CDs (Product POJOs)");
+> 			System.out.println("Displaying list of CDs: product codes and descriptions");
+> 			Set<Product> productSet = userService.findAllProducts();
+> 			PresentationUtils.displayCDCatlog(productSet, System.out);
+> 			String productCode = PresentationUtils.readEntry(in,
+83,84c92,93
+< 			if (productId.equalsIgnoreCase("S")) {
+< 				handleCartPage(/* null */);
+---
+> 			if (productCode.equalsIgnoreCase("S")) {
+> 				handleCartPage(null);
+86c95
+< 			} else if (productId.equalsIgnoreCase("Q"))
+---
+> 			} else if (productCode.equalsIgnoreCase("Q"))
+88,89c97
+< 			System.out
+< 					.println("Getting Product object for selected product code");
+---
+> 			System.out.println("Getting Product object for selected product code");
+91c99,100
+< 			handleProduct(/* product */);
+---
+> 			Product product = userService.findProductByCode(productCode);
+> 			handleProduct(product);
+97,98c106,107
+< 	 * listening to tracks, registering, etc. and when done, we'll return to
+< 	 * Catalog page.
+---
+> 	 * listening to tracks, registering, etc. and when done, we'll return to Catalog
+> 	 * page.
+100,103c109,112
+< 	 * Since the Catalog page and the Sound page share so many user commands, we
+< 	 * use this one method to handle both, with a variable "listening" to tell
+< 	 * which one we're handling at the moment: listening == false: Product Page
+< 	 * commands A S L B listening == true: Sound Page commands T A S B
+---
+> 	 * Since the Catalog page and the Sound page share so many user commands, we use
+> 	 * this one method to handle both, with a variable "listening" to tell which one
+> 	 * we're handling at the moment: listening == false: Product Page commands A S L
+> 	 * B listening == true: Sound Page commands T A S B
+105a115
+> 	 * @throws ServiceException
+107c117
+< 	public void handleProduct(/* Product product */) throws IOException {
+---
+> 	public void handleProduct(Product product) throws IOException, ServiceException {
+115,116c125,126
+< 				System.out
+< 						.println(" Displaying list of tracks: track# and title");
+---
+> 				System.out.println(" Displaying list of tracks: track# and title");
+> 				PresentationUtils.displayTracks(product, System.out);
+119a130
+> 				PresentationUtils.displayProductInfo(product, System.out);
+125c136,138
+< 
+---
+> 			if (cart == null) {
+> 				cart = userService.newCart();
+> 			}
+130,131c143
+< 			System.out
+< 					.println("S: Show Cart - has other options like CheckOut");
+---
+> 			System.out.println("S: Show Cart - has other options like CheckOut");
+136,137c148
+< 			command = PresentationUtils.readEntry(in,
+< 					"Please Enter the Command");
+---
+> 			command = PresentationUtils.readEntry(in, "Please Enter the Command");
+141c152
+< 				handleCartPage(/* product */);
+---
+> 				handleCartPage(product);
+145c156
+< 				handleCartPage(/* null */);
+---
+> 				handleCartPage(null);
+150,151c161,162
+< 				// if (user == null)
+< 				// user = userUI(); // do simple registration if needed
+---
+> 				if (user == null)
+> 					user = userUI(); // do simple registration if needed
+155,156c166
+< 				String trackNumberString = PresentationUtils.readEntry(in,
+< 						"Please enter track# to download & play");
+---
+> 				String trackNumberString = PresentationUtils.readEntry(in, "Please enter track# to download & play");
+158,159c168
+< 				System.out.println("getting Track " + trackNumber
+< 						+ ", recording download and fake-playing track");
+---
+> 				System.out.println("getting Track " + trackNumber + ", recording download and fake-playing track");
+161c170,177
+< 			
+---
+> 				User usr = userService.findUserById(user.getId());
+> 				Track t = product.findTrackbyNumber(trackNumber);
+> 				if (t != null) {
+> 					userService.download(usr.getEmailAddress(), t);
+> 					PresentationUtils.playTrack(t, System.out);
+> 				}
+> 				else
+> 					System.out.println("Invalid Track number: " + trackNumber);
+170,172c186,190
+< 	 * Handle Cart page actions (pg. 664) No product is singled out at this
+< 	 * point, except that the argued newProduct, if non-null, is being added to
+< 	 * the cart here. Return to top level when done here.
+---
+> 	 * Handle Cart page actions (pg. 664) No product is singled out at this point,
+> 	 * except that the argued newProduct, if non-null, is being added to the cart
+> 	 * here. Return to top level when done here.
+> 	 * 
+> 	 * @throws ServiceException
+176c194
+< 	public void handleCartPage(/* Product newProduct */) throws IOException {
+---
+> 	public void handleCartPage(Product newProduct) throws IOException, ServiceException {
+178a197,199
+> 		if (newProduct != null){
+> 			userService.addToCart(newProduct, cart);
+> 		}
+181a203,204
+> 			Set<CartItemData> cartInfo = userService.cartInfo(cart);
+> 			PresentationUtils.displayCart(cartInfo, System.out);
+187,188c210
+< 			String command = PresentationUtils.readEntry(in,
+< 					"Please Enter the Command");
+---
+> 			String command = PresentationUtils.readEntry(in, "Please Enter the Command");
+191,192c213
+< 				String productCode = PresentationUtils.readEntry(in,
+< 						"Enter the product code of product to change");
+---
+> 				String productCode = PresentationUtils.readEntry(in, "Enter the product code of product to change");
+194,198c215,218
+< 				int quantity = Integer.parseInt(PresentationUtils.readEntry(in,
+< 						"Enter the new quantity of the product"));
+< 				System.out
+< 						.println("calling service layer to update Cart for product"
+< 								+ productCode + ", quantity " + quantity);
+---
+> 				int quantity = Integer
+> 						.parseInt(PresentationUtils.readEntry(in, "Enter the new quantity of the product"));
+> 				System.out.println(
+> 						"calling service layer to update Cart for product" + productCode + ", quantity " + quantity);
+201,202c221
+< 				String productCode = PresentationUtils.readEntry(in,
+< 						"Enter the product code for removal");
+---
+> 				String productCode = PresentationUtils.readEntry(in, "Enter the product code for removal");
+204,205c223
+< 				System.out.println("calling service layer to remove product "
+< 						+ productCode + " from cart");
+---
+> 				System.out.println("calling service layer to remove product " + productCode + " from cart");
+216c234
+< 	public void handleCheckOut() {
+---
+> 	public void handleCheckOut() throws IOException, ServiceException {
+218,219c236,237
+< 		// if (user == null)
+< 		// user = userUI();
+---
+> 		if (user == null)
+> 			user = userUI();
+222c240,241
+< 		// PresentationUtils.displayCart(cart, System.out);
+---
+> 		Set<CartItemData> cartInfo = userService.cartInfo(cart);
+> 		PresentationUtils.displayCart(cartInfo, System.out);
+226,227c245,247
+< 		System.out
+< 				.println("\nThank you for your order, your cart is now empty.\n");
+---
+> 		InvoiceData invoiceData = userService.checkOut(cart, user);
+> 		PresentationUtils.displayInvoice(invoiceData, System.out);
+> 		System.out.println("\nThank you for your order, your cart is now empty.\n");
+230c250
+< 	public/* UserData */void userUI() throws IOException {
+---
+> 	public UserData userUI() throws IOException, ServiceException {
+232c252
+< 		// User registeredUser = null;
+---
+> 		UserData registeredUser = null;
+234c254
+< 				"\n Give us a few registration details:\n FirstName: ");
+---
+> 				"\n Give us a few registration details:\n\t\t FirstName: ");
+240,241c260,263
+< 
+< 		return /* registeredUser */;
+---
+> 		userService.registerUser(fName, lName, eMail);
+> 		registeredUser = userService.findUserByEmail(eMail);
+> 		PresentationUtils.displayUserInfo(registeredUser, System.out);
+> 		return registeredUser;
+-------Finished run--------------------------------------

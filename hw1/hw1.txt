@@ -1,0 +1,116 @@
+Name: Run Lin
+Homework: 1
+Class: CS636
+
+3.A)
+Three most important object methods equals(), hashCode(), toString()
+
+3.B)
+String s = "abc";
+String t = "abx";
+if (s.equals(t))
+{
+    return (s.equals(t)); // returns false;
+}
+
+by doing if (s == t), we are comparing the memory of object s and t, and they should be different memory addresses thus yield false.
+on the other hand, by doing s.equals(t) we are comparing the string equivalence thus yield true.
+
+3.C)
+Powershell Result:
+(no @override) s.toString : abc
+(no @override) s.hashCode(): 96354
+-----------------------------------------------------
+Code: (hash.java)
+public class hash {
+    public static void main(String[] args)
+    {
+        String s = "abc";
+        System.out.println("(no @override) s.toString : " + s.toString());
+        System.out.println("(no @override) s.hashCode(): " + s.hashCode());
+    }
+}
+
+4.A) Included in file folder (Box1.java)
+4.B) Included in file folder (Box2.java)
+
+4.C)
+Powershell Result:
+b.isEquals(c)? true
+box b hash (ret area): 120
+box c hash (ret area): 120
+10x12
+10x12
+
+5.A)
+Not Sure
+
+5.B)
+To get all element of a Set, we can use an instantiate an Iterator<E> to traverse through the Set.
+We can also use iterator to traverse through lists, hashsets, link-lists.
+
+Iterator iter = set.iterator;
+while (iter.hasNext())
+{
+    System.out.println(iter.next());
+}
+
+5.C)
+We can print all the keys of a map using iterator aswell, we can convert it into a Set
+using entrySet() and then traverse it.
+
+for(Map.Entry<String, Integer> entry: m.entrySet())
+{
+    System.out.print(entry.getKey() + " : " + entry.getValue());
+}
+
+5.D)
+Powershell Result:
+<x, 6>
+
+Code: Included in file folder (map.java)
+import java.util.*;
+public class map {
+    public static void main(String[] args)
+    {
+        Map<String, Integer> m = new HashMap<String, Integer>();
+        m.put("x", 6);
+
+        for(Map.Entry<String, Integer> entry: m.entrySet())
+        {
+            System.out.print("<" + entry.getKey() + ", " + entry.getValue() + ">");
+        }
+    }
+}
+
+6.A)
+In the JDBC API there are:
+public void createTable()
+public void populateTable()
+
+6.B)
+We do not need new connections for each new SQL statement,
+as seen in the examples in "https://docs.oracle.com/javase/tutorial/jdbc/basics/tables.html"
+stmt = con.createStatement(); and then we proceed to make several different SQL-statements
+before doing stmt.close();
+
+6.C)
+Connection.close() closes the connection between the client and the database,
+and it must be done at the end when we no longer wish to be connected.
+If we don't indicate that we want to close, then there is a leak in resource not freed.
+
+6.D)
+Not Sure
+
+7.) Dev-Setup:
+IDE:
+Visual Studio Code
+
+Java env:
+PS C:\Users\LIN-PC\Desktop\hw1> java -version
+java version "1.8.0_241"
+Java(TM) SE Runtime Environment (build 1.8.0_241-b07)
+Java HotSpot(TM) Client VM (build 25.241-b07, mixed mode)
+
+8.) waiting for umb server to be back online
+9.) waiting for umb server to be back online

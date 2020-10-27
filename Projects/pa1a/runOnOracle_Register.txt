@@ -1,0 +1,22 @@
+Script started on Wed 11 Mar 2020 10:27:11 PM EDT
+runlin@topcat:~/cs636/pa1a$ ./runOnOracle.sh Register
+./runOnOracle.sh: line 1: music#: command not found
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+dbUrl : jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+usr : runlin
+pw : runlin
+DbDAO constructor called with jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+SQL code: insert into site_user (user_id, firstname, lastname, email_address) values (1, 'Run', 'Lin', 'runlin@umb.edu') 
+Register user complete, exiting...
+runlin@topcat:~/cs636/pa1a$ ./runOnOracle.sh Register
+./runOnOracle.sh: line 1: music#: command not found
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+dbUrl : jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+usr : runlin
+pw : runlin
+DbDAO constructor called with jdbc:oracle:thin:@dbs3.cs.umb.edu:1521:dbs3
+User with email: 'runlin@umb.edu' already exist!
+runlin@topcat:~/cs636/pa1a$ exit
+exit
+
+Script done on Wed 11 Mar 2020 10:27:37 PM EDT

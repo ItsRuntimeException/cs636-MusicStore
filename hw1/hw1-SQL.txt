@@ -1,0 +1,91 @@
+Name: Run Lin
+Homework: 1
+Class: CS636
+
+SELECT FROM NOBEL
+nobel(yr, subject, winner)
+
+#1-4)
+SELECT winner
+FROM nobel
+WHERE yr >= 2000
+AND subject = 'peace'
+
+#1-7)
+SELECT winner
+FROM nobel
+WHERE winner like 'John%'
+
+
+
+SELECT WITHIN SELECT
+world(name, continent, area, population, gdp)
+
+#2-2)
+SELECT name
+FROM world
+WHERE continent = 'Europe' and gdp/population > (
+	SELECT gdp/population FROM world WHERE name ='United Kingdom')
+
+#2-4)
+SELECT name, population
+FROM world
+WHERE population > (SELECT population FROM world WHERE name = 'Canada') and population < (SELECT population FROM world WHERE name = 'Poland')
+
+#2-6)
+SELECT name
+FROM world
+WHERE gdp > ALL(select gdp from world where continent = 'Europe' and gdp > 0)
+
+
+
+SUM AND COUNT
+world(name, continent, area, population, gdp)
+
+#3-2)
+SELECT distinct continent
+FROM world
+
+#3-4)
+SELECT count(name)
+FROM world
+WHERE area > 1000000
+
+#3-6)
+SELECT continent, count(name)
+FROM world
+GROUP BY continent
+
+
+
+MORE JOINS
+movie(id, title, yr, director, budget, gross)
+actor(id, name)
+casting(movieid, actorid, ord)
+
+#4-3)
+SELECT id, title, yr
+FROM movie
+WHERE title LIKE '%star trek%'
+GROUP BY yr
+
+#4-6)
+SELECT a.name
+FROM actor a
+INNER JOIN casting c
+ON a.id = c.actorid and c.movieid=11768
+
+#4-7)
+SELECT a.name
+FROM actor a
+INNER JOIN casting c
+ON a.id = c.actorid and c.movieid = (SELECT id FROM movie WHERE title = 'Alien')
+
+#4-9)
+SELECT m.title
+FROM movie m
+INNER JOIN casting c
+ON m.id = c.movieid
+INNER JOIN actor a
+ON c.actorid = a.id
+WHERE a.name = 'Harrison Ford' and c.ord != 1

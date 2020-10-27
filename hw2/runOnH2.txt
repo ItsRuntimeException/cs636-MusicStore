@@ -1,0 +1,174 @@
+Script started on Sun 23 Feb 2020 07:46:31 PM EST
+runlin@topcat:~/cs636/hw2/pizza1$ ./runOnH2.sh [Krunlin@topcat:~/cs636/hw2/pizza1$ ./runOnH2.sh SystemTest
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+running SystemTest with args: test.dat null null null
+running SystemTest, calling config with: null null null
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test
+
+
+*************ai***************
+
+----OK
+
+
+*************so 5***************
+
+----OK
+
+
+*************so 1***************
+
+----OK
+
+
+*************ss 5***************
+
+----------Order Status--------------
+Order 1
+PREPARING
+Room 5
+Order's Toppings: Pepperoni 
+Order's Size: small
+-------------------------------------
+----OK
+
+
+*************anr***************
+
+----OK
+
+
+*************ss 5***************
+
+----------Order Status--------------
+Order 1
+BAKED
+Room 5
+Order's Toppings: Pepperoni 
+Order's Size: small
+-------------------------------------
+----OK
+
+
+*************aip***************
+
+ORDER ID: 2
+ORDER DAY: 1
+ROOM NUMBER: 1
+STATUS: PREPARING
+---------------------
+ORDER ID: 1
+ORDER DAY: 1
+ROOM NUMBER: 5
+STATUS: BAKED
+---------------------
+----OK
+
+
+*************sr 5***************
+
+----OK
+
+
+*************ss 5***************
+
+----------Order Status--------------
+Order 1
+FINISHED
+Room 5
+Order's Toppings: Pepperoni 
+Order's Size: small
+-------------------------------------
+----OK
+
+
+*************aip***************
+
+ORDER ID: 2
+ORDER DAY: 1
+ROOM NUMBER: 1
+STATUS: PREPARING
+---------------------
+----OK
+
+
+*************aad***************
+
+----OK
+
+
+*************aip***************
+
+----OK
+Run complete, exiting
+runlin@topcat:~/cs636/hw2/pizza1$ ./runOnH2.sh TakeOrder
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Using H2
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test
+Possible Commands
+O: Order
+S: Status Report
+R: Receive Order (acknowledge receipt)
+Q: Quit
+Please Enter the Command:
+O
+Please Enter the room Number:
+1
+Basic Pizza: tomato sauce and cheese 
+Additional toppings:
+  Pepperoni
+Sizes:
+  small
+Available pizza sizes to choose from:
+1  small
+Enter the size #:
+16
+Not a valid choice, try again
+1  small
+Enter the size #:
+1
+Available pizza toppings to choose from:
+1  Pepperoni
+Enter Topping number, or q for no more Toppings:
+1
+1  Pepperoni
+Enter Topping number, or q for no more Toppings:
+q
+Thank you for your order
+Possible Commands
+O: Order
+S: Status Report
+R: Receive Order (acknowledge receipt)
+Q: Quit
+Please Enter the Command:
+q
+Thanks for visiting the pizza shop.
+runlin@topcat:~/cs636/hw2/pizza1$ ru[K[K.;[K/runOnH2.sh ShopAdmin
+Picked up _JAVA_OPTIONS: -Djava.security.egd=file:/dev/../dev/urandom
+Using H2
+DbDAO constructor: replacing null dbUrl with jdbc:h2:~/test
+Enter one of the following commands:
+INIT: Initialize Database
+AT: Add new Topping
+DT: Delete Topping
+AS: Add new pizza Size
+DS: Delete pizza Size
+AD: Advance the Day
+NR: Make Next order Ready
+IP: In-progress Orders Report
+QS: Quit System
+PC: Print list of Commands
+Please Enter The Command:
+IP
+ORDER ID: 3
+ORDER DAY: 2
+ROOM NUMBER: 1
+STATUS: PREPARING
+---------------------
+Command done, exiting
+runlin@topcat:~/cs636/hw2/pizza1$ QS
+QS: command not found
+runlin@topcat:~/cs636/hw2/pizza1$ exit
+exit
+
+Script done on Sun 23 Feb 2020 07:48:39 PM EST

@@ -1,0 +1,39 @@
+<campus>
+    <building name="Stipes">
+        <address>"900 Western"</address>
+        <floor number="4">
+            <office roomnumber="453">
+                <professor lastname="leff" firstname="laurence" department="cs" degree="Ph.D" average_evaluation="1.8"> </professor> 
+                <furniture name="matzoh" price="500.00"> </furniture> 
+                <furniture name="desk" price="150.00"> </furniture>
+            </office>
+
+            <office roomnumber="423">
+                <professor lastname="smith" firstname="john" department="mgt" degree="Ph.D" average_evaluation="4.8"/>
+                <furniture name="cabinet" price="200.00"/>
+                <furniture name="desk" price="150.00"/> <!--ERROR HERE: Missing "/" inside <furniture name="desk" price="150.00"(/ should be here)>-->
+            </office>
+        </floor>
+
+        <floor number="3">
+            <classroom roomnumber="301" capacity="30"/>
+            <classroom roomnumber="321" capacity="40"/>
+        </floor>
+    </building>
+
+    <street name="Western AVenue"> </street>
+    <street name="Murray Street"> </street>
+
+    <building name="Morgan">
+        <floor number="4">
+            <classroom roomnumber="401" capacity="30"/>
+            <classroom roomnumber="431" capacity="40"/>
+        </floor>
+
+        <floor number="3">
+            <classroom roomnumber="321" capacity="38"/>
+            <classroom roomnumber="371" capacity="48"/>
+        </floor>
+    </building>
+</campus>
+
